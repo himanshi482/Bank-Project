@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPX BANK - Fund Scheme Details</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/favicon/favicon.png') }}">
+    <meta name="description" content="SPX BANK Mutual Fund Details & Portfolio Holdings.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="portal-wrapper">
+
+        <div class="spx-top-nav">
+            <div class="spx-top-nav-container">
+                <div class="spx-top-nav-left"><span class="spx-top-tab">Banking</span></div>
+                <div class="spx-top-nav-right">
+                    <a href="tel:1800111101" class="spx-top-link spx-icon-link">1800-11-1101</a>
+                    <button class="spx-logout-btn" onclick="window.location.href='/logout'">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <header class="spx-main-header">
+            <div class="spx-header-container">
+                <div class="spx-logo-block" onclick="window.location.href='/'">
+                    <span class="spx-text">SPX BANK</span>
+                    <span class="net-banking-tag">NET-BANKING</span>
+                </div>
+                <nav class="spx-main-nav">
+                    <div class="spx-nav-menu logged-in-menu">
+                        <a href="/home/landingPage/homePage" class="spx-nav-item">Overview</a>
+                        <a href="/home/landingPage/manageRelationship/transactionAccounts" class="spx-nav-item">Accounts</a>
+                        <a id="nav-investments-tab" class="spx-nav-item active" href="/investments">Investments</a>
+                    </div>
+                </nav>
+                {% include 'components/investments_mega_menu.html' %}
+                <div class="spx-header-actions">
+                    <div class="spx-user-badge"><span class="spx-avatar-initials">JD</span></div>
+                </div>
+            </div>
+        </header>
+
+        <main class="spx-portal-body">
+            <div class="spx-investments-container">
+
+                <nav class="spx-breadcrumb-nav">
+                    <a href="/home/landingPage/homePage">Home</a>
+                    <span class="separator">&gt;</span>
+                    <a href="/investments">Investments</a>
+                    <span class="separator">&gt;</span>
+                    <a href="/investments/mutual-funds">Mutual Funds</a>
+                    <span class="separator">&gt;</span>
+                    <span class="current" id="fundDetailTitleName">SPX Large Cap Flexi Equity Fund</span>
+                </nav>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 28px; margin-bottom: 40px;">
+
+                    <!-- LEFT DETAILS COLUMN -->
+                    <div>
+                        <div class="spx-portfolio-section" style="margin-bottom: 24px;">
+                            <div class="spx-fund-head" style="margin-bottom: 18px;">
+                                <div>
+                                    <h1 style="font-size: 1.6rem; color: #111827; margin-bottom: 6px;">SPX Large Cap Flexi Equity Fund</h1>
+                                    <span class="spx-fund-cat" style="font-size: 0.9rem;">Equity • Flexi Cap Scheme • Direct Plan - Growth</span>
+                                </div>
+                                <span class="spx-risk-badge very-high">Very High Risk</span>
+                            </div>
+
+                            <!-- KEY STATS METRICS -->
+                            <div class="spx-summary-cards-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px;">
+                                <div class="spx-summary-card">
+                                    <div class="spx-scard-label">NAV (Net Asset Value)</div>
+                                    <div class="spx-scard-value">₹142.85</div>
+                                    <span style="font-size: 0.78rem; color: #16a34a;">+1.45 (+1.02%) Today</span>
+                                </div>
+                                <div class="spx-summary-card">
+                                    <div class="spx-scard-label">Fund Size (AUM)</div>
+                                    <div class="spx-scard-value">₹14,250 Cr</div>
+                                </div>
+                                <div class="spx-summary-card">
+                                    <div class="spx-scard-label">Expense Ratio</div>
+                                    <div class="spx-scard-value">0.85%</div>
+                                </div>
+                            </div>
+
+                            <!-- PERFORMANCE CHART -->
+                            <div class="spx-chart-wrapper">
+                                <div class="spx-chart-header">
+                                    <span class="spx-chart-title">Historical NAV Performance Chart</span>
+                                    <div class="spx-timeframe-selector">
+                                        <button class="spx-tf-btn" onclick="updatePortfolioTimeframe('1M', this)">1M</button>
+                                        <button class="spx-tf-btn" onclick="updatePortfolioTimeframe('6M', this)">6M</button>
+                                        <button class="spx-tf-btn active" onclick="updatePortfolioTimeframe('1Y', this)">1Y</button>
+                                        <button class="spx-tf-btn" onclick="updatePortfolioTimeframe('3Y', this)">3Y</button>
+                                        <button class="spx-tf-btn" onclick="updatePortfolioTimeframe('5Y', this)">5Y</button>
+                                    </div>
+                                </div>
+                                <div class="spx-canvas-container">
+                                    <canvas id="portfolioCanvas"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SCHEME INFORMATION TABS -->
+                        <div class="spx-portfolio-section">
+                            <div class="spx-filter-tabs">
+                                <button class="spx-tab-item active" onclick="switchFundDetailTab('overview', this)">Overview</button>
+                                <button class="spx-tab-item" onclick="switchFundDetailTab('performance', this)">Performance</button>
+                                <button class="spx-tab-item" onclick="switchFundDetailTab('portfolio', this)">Portfolio</button>
+                                <button class="spx-tab-item" onclick="switchFundDetailTab('risk', this)">Risk Metrics</button>
+                                <button class="spx-tab-item" onclick="switchFundDetailTab('documents', this)">Documents</button>
+                            </div>
+
+                            <div id="tab-overview" class="spx-tab-content">
+                                <h3 style="font-size: 1.1rem; color: #2d103f; margin-bottom: 10px;">Investment Objective</h3>
+                                <p style="color: var(--spx-text-gray); line-height: 1.6; font-size: 0.92rem; margin-bottom: 20px;">
+                                    The primary objective of the scheme is to generate long-term capital appreciation by investing in a diversified portfolio consisting predominantly of equity and equity-related instruments across large-cap and high-growth market opportunities.
+                                </p>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 0.88rem;">
+                                    <div><strong>Minimum SIP Amount:</strong> ₹500</div>
+                                    <div><strong>Minimum Lumpsum:</strong> ₹1,000</div>
+                                    <div><strong>Exit Load:</strong> 1.00% if redeemed within 365 days</div>
+                                    <div><strong>Fund Manager:</strong> Mr. R. Sharma (12+ Yrs Exp)</div>
+                                </div>
+                            </div>
+
+                            <div id="tab-performance" class="spx-tab-content" style="display: none;">
+                                <table class="spx-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Period</th>
+                                            <th>Scheme Returns</th>
+                                            <th>Benchmark (NIFTY 50 TRI)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>1 Year</td><td style="color:#16a34a; font-weight:700;">22.40%</td><td>18.10%</td></tr>
+                                        <tr><td>3 Year</td><td style="color:#16a34a; font-weight:700;">18.20% p.a.</td><td>15.40% p.a.</td></tr>
+                                        <tr><td>5 Year</td><td style="color:#16a34a; font-weight:700;">16.50% p.a.</td><td>14.10% p.a.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div id="tab-portfolio" class="spx-tab-content" style="display: none;">
+                                <h3 style="font-size: 1.05rem; color: #2d103f; margin-bottom: 12px;">Top Asset Holdings</h3>
+                                <table class="spx-table">
+                                    <thead>
+                                        <tr><th>Holding Company</th><th>Sector</th><th>Allocation %</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>HDFC Bank Ltd</td><td>Financials</td><td>9.45%</td></tr>
+                                        <tr><td>Reliance Industries Ltd</td><td>Energy</td><td>8.20%</td></tr>
+                                        <tr><td>ICICI Bank Ltd</td><td>Financials</td><td>7.10%</td></tr>
+                                        <tr><td>Infosys Ltd</td><td>Technology</td><td>6.85%</td></tr>
+                                        <tr><td>Tata Consultancy Services</td><td>Technology</td><td>5.30%</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div id="tab-risk" class="spx-tab-content" style="display: none;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-size: 0.9rem;">
+                                    <div>Standard Deviation: <strong>14.2%</strong></div>
+                                    <div>Sharpe Ratio: <strong>1.48</strong></div>
+                                    <div>Beta: <strong>0.92</strong></div>
+                                    <div>Alpha: <strong>4.10%</strong></div>
+                                </div>
+                            </div>
+
+                            <div id="tab-documents" class="spx-tab-content" style="display: none;">
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
+                                    <a href="#" style="color: var(--spx-accent-purple); text-decoration: none; font-weight: 600;" onclick="showToast('Downloading Scheme Information Document (SID)...', 'info')">📄 Scheme Information Document (SID.pdf)</a>
+                                    <a href="#" style="color: var(--spx-accent-purple); text-decoration: none; font-weight: 600;" onclick="showToast('Downloading Key Information Memorandum...', 'info')">📄 Key Information Memorandum (KIM.pdf)</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT ORDER INVESTMENT PANEL -->
+                    <div>
+                        <div class="spx-calculator-card" style="padding: 24px; position: sticky; top: 90px;">
+                            <h3 style="font-size: 1.2rem; color: #2d103f; margin-bottom: 18px;">Start Investing</h3>
+                            
+                            <div class="spx-form-group">
+                                <label class="spx-form-label">Investment Mode</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <button id="btnModeSip" class="spx-tab-item active" style="flex: 1; text-align: center;" onclick="setInvestMode('SIP')">SIP (Monthly)</button>
+                                    <button id="btnModeLump" class="spx-tab-item" style="flex: 1; text-align: center;" onclick="setInvestMode('Lumpsum')">Lump-sum</button>
+                                </div>
+                            </div>
+
+                            <div class="spx-form-group">
+                                <label class="spx-form-label">Investment Amount (₹)</label>
+                                <input type="number" id="detailAmount" class="spx-form-input" min="500" value="1000" placeholder="Min ₹500">
+                            </div>
+
+                            <div id="sipSettingsGroup">
+                                <div class="spx-form-group">
+                                    <label class="spx-form-label">SIP Frequency</label>
+                                    <select id="sipFreq" class="spx-form-input">
+                                        <option value="Monthly">Monthly</option>
+                                        <option value="Quarterly">Quarterly</option>
+                                    </select>
+                                </div>
+
+                                <div class="spx-form-group">
+                                    <label class="spx-form-label">Preferred Monthly SIP Date</label>
+                                    <select id="sipDate" class="spx-form-input">
+                                        <option value="1st">1st of every month</option>
+                                        <option value="5th" selected>5th of every month</option>
+                                        <option value="10th">10th of every month</option>
+                                        <option value="15th">15th of every month</option>
+                                        <option value="25th">25th of every month</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="spx-form-group">
+                                <label class="spx-form-label">Source Account</label>
+                                <input type="text" class="spx-form-input" value="SPX Savings Account (#8849-XXXX-2049)" readonly style="background: #faf8fd;">
+                            </div>
+
+                            <button class="spx-btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="triggerDetailInvest()">Invest Now</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+
+        <footer class="spx-portal-footer">
+            <div class="spx-footer-container">
+                <div class="spx-footer-copy">&copy; 2026 SPX BANK. All rights reserved.</div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- SECURITY CONFIRM MODAL -->
+    <div id="securityConfirmModal" class="spx-modal-backdrop">
+        <div class="spx-modal-card">
+            <button class="spx-modal-close" onclick="closeAllModals()">&times;</button>
+            <h3 id="securityModalTitle" style="color: #2d103f; font-size: 1.25rem; margin-bottom: 12px;">Confirm Mutual Fund Order</h3>
+            <div id="securityModalDetails" style="background: #faf8fd; padding: 14px; border-radius: 10px; margin-bottom: 18px; font-size: 0.88rem; color: #444;"></div>
+            <div class="spx-form-group">
+                <label class="spx-form-label">Enter 4-Digit Net-Banking MPIN / OTP</label>
+                <input type="password" id="securityMpinInput" class="spx-form-input" maxlength="4" placeholder="••••">
+            </div>
+            <button class="spx-btn-primary" style="width: 100%; justify-content: center;" onclick="executeSecurityConfirm()">Confirm & Authorize Order</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/investments.js') }}"></script>
+    <script>
+        let currentMode = 'SIP';
+
+        function setInvestMode(mode) {
+            currentMode = mode;
+            document.getElementById('btnModeSip').classList.toggle('active', mode === 'SIP');
+            document.getElementById('btnModeLump').classList.toggle('active', mode === 'Lumpsum');
+            document.getElementById('sipSettingsGroup').style.display = mode === 'SIP' ? 'block' : 'none';
+        }
+
+        function switchFundDetailTab(tabId, btn) {
+            document.querySelectorAll('.spx-tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.spx-tab-item').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tabId).style.display = 'block';
+            if (btn) btn.classList.add('active');
+        }
+
+        function triggerDetailInvest() {
+            const amt = document.getElementById('detailAmount').value;
+            if (!amt || amt < 500) {
+                showToast('Please enter a valid investment amount (Min ₹500)', 'error');
+                return;
+            }
+            const dateStr = currentMode === 'SIP' ? ` on ${document.getElementById('sipDate').value}` : '';
+            promptSecurityConfirmation('Authorize Fund Investment', `
+                <strong>Order Details:</strong><br>
+                Scheme: SPX Large Cap Flexi Equity Fund<br>
+                Mode: ${currentMode}<br>
+                Amount: <strong>₹${parseFloat(amt).toLocaleString()}</strong> ${dateStr}<br>
+                Debit Account: SPX Savings Account (#8849-2049)
+            `, () => {
+                showToast(`Successfully registered ${currentMode} of ₹${parseFloat(amt).toLocaleString()}!`, 'success');
+            });
+        }
+    </script>
+</body>
+</html>

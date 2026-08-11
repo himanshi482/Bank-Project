@@ -772,6 +772,10 @@ function triggerQuickAction(actionName) {
         window.location.href = '/home/landingPage/manageRelationship/transactionAccounts';
         return;
     }
+    if (actionName === 'Investments' || actionName === 'View All Investments') {
+        window.location.href = '/home/landingPage/manageRelationship/investments';
+        return;
+    }
     showTimeoutModal("This feature is currently under development.");
 }
 
@@ -1027,20 +1031,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Investments tab ──
   if (investmentsBtn && investmentsMegaMenu) {
+    investmentsBtn.addEventListener('mouseenter', () => {
+      const activeTab = document.querySelector('.spx-nav-item.active');
+      if (activeTab && activeTab !== investmentsBtn) {
+        previouslyActiveTab = activeTab;
+        activeTab.classList.remove('active');
+      }
+      closeAllMenus(false);
+      openMenu(investmentsMegaMenu, investmentsBtn);
+    });
+
     investmentsBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const isOpening = !investmentsMegaMenu.classList.contains('active');
-      if (isOpening) {
-        // Snapshot active tab before closing it
-        const activeTab = document.querySelector('.spx-nav-item.active');
-        if (activeTab && activeTab !== investmentsBtn) {
-          previouslyActiveTab = activeTab;
-          activeTab.classList.remove('active');
-        }
-        closeAllMenus(false);
-        openMenu(investmentsMegaMenu, investmentsBtn);
+      const targetHref = investmentsBtn.getAttribute('href');
+      if (targetHref && targetHref !== '#') {
+        window.location.href = targetHref;
       } else {
-        closeAllMenus(true);
+        window.location.href = '/investments';
       }
     });
   }

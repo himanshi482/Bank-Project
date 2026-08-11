@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPX BANK - Apply for IPO</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/favicon/favicon.png') }}">
+    <meta name="description" content="Apply for IPO via SPX Bank ASBA.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="portal-wrapper">
+
+        <div class="spx-top-nav">
+            <div class="spx-top-nav-container">
+                <div class="spx-top-nav-left"><span class="spx-top-tab">Banking</span></div>
+                <div class="spx-top-nav-right">
+                    <a href="tel:1800111101" class="spx-top-link spx-icon-link">1800-11-1101</a>
+                    <button class="spx-logout-btn" onclick="window.location.href='/logout'">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <header class="spx-main-header">
+            <div class="spx-header-container">
+                <div class="spx-logo-block" onclick="window.location.href='/'">
+                    <span class="spx-text">SPX BANK</span>
+                    <span class="net-banking-tag">NET-BANKING</span>
+                </div>
+                <nav class="spx-main-nav">
+                    <div class="spx-nav-menu logged-in-menu">
+                        <a href="/home/landingPage/homePage" class="spx-nav-item">Overview</a>
+                        <a href="/home/landingPage/manageRelationship/transactionAccounts" class="spx-nav-item">Accounts</a>
+                        <a id="nav-investments-tab" class="spx-nav-item active" href="/investments">Investments</a>
+                    </div>
+                </nav>
+                {% include 'components/investments_mega_menu.html' %}
+                <div class="spx-header-actions">
+                    <div class="spx-user-badge"><span class="spx-avatar-initials">JD</span></div>
+                </div>
+            </div>
+        </header>
+
+        <main class="spx-portal-body">
+            <div class="spx-investments-container">
+
+                <nav class="spx-breadcrumb-nav">
+                    <a href="/home/landingPage/homePage">Home</a>
+                    <span class="separator">&gt;</span>
+                    <a href="/investments">Investments</a>
+                    <span class="separator">&gt;</span>
+                    <a href="/investments/ipo">IPO</a>
+                    <span class="separator">&gt;</span>
+                    <span class="current">TechVista Solutions Ltd</span>
+                </nav>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 28px; margin-bottom: 40px;">
+
+                    <!-- LEFT ISSUE DETAILS -->
+                    <div>
+                        <div class="spx-portfolio-section" style="margin-bottom: 24px;">
+                            <div class="spx-fund-head" style="margin-bottom: 18px;">
+                                <div>
+                                    <h1 style="font-size: 1.6rem; color: #111827; margin-bottom: 4px;">TechVista Solutions Ltd</h1>
+                                    <span class="spx-fund-cat" style="font-size: 0.9rem;">Symbol: TECHVISTA • IT & Software Services</span>
+                                </div>
+                                <span class="spx-badge completed">14.8x Subscribed</span>
+                            </div>
+
+                            <p style="color: var(--spx-text-gray); line-height: 1.6; font-size: 0.92rem; margin-bottom: 24px;">
+                                TechVista Solutions Ltd is a leading global digital transformation and enterprise software consulting company operating across 24 countries with over 15,000 technology engineers.
+                            </p>
+
+                            <!-- ISSUE DETAILS GRID -->
+                            <h3 style="font-size: 1.1rem; color: #2d103f; margin-bottom: 14px;">Issue Details</h3>
+                            <div class="spx-summary-cards-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+                                <div class="spx-summary-card">
+                                    <div class="spx-scard-label">Price Band</div>
+                                    <div class="spx-scard-value">₹420 - ₹445</div>
+                                </div>
+                                <div class="spx-summary-card">
+                                    <div class="spx-scard-label">Issue Size</div>
+                                    <div class="spx-scard-value">₹1,450 Cr</div>
+                                </div>
+                                <div class="spx-summary-card">
+                                    <div class="spx-scard-label">Lot Size</div>
+                                    <div class="spx-scard-value">33 Shares</div>
+                                </div>
+                                <div class="spx-summary-card">
+                                    <div class="spx-scard-label">Minimum Investment</div>
+                                    <div class="spx-scard-value">₹14,685.00</div>
+                                </div>
+                                <div class="spx-summary-card">
+                                    <div class="spx-scard-label">Opening Date</div>
+                                    <div class="spx-scard-value" style="font-size: 1.1rem;">12 Aug 2026</div>
+                                </div>
+                                <div class="spx-summary-card">
+                                    <div class="spx-scard-label">Closing Date</div>
+                                    <div class="spx-scard-value" style="font-size: 1.1rem;">14 Aug 2026</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT SUBSCRIPTION CALCULATOR PANEL -->
+                    <div>
+                        <div class="spx-calculator-card" style="padding: 24px; position: sticky; top: 90px;">
+                            <h3 style="font-size: 1.2rem; color: #2d103f; margin-bottom: 18px;">IPO Subscription Bidding</h3>
+
+                            <div class="spx-form-group">
+                                <label class="spx-form-label">Investor Category</label>
+                                <select class="spx-form-input">
+                                    <option value="IND">Retail Individual (IND)</option>
+                                    <option value="HNI">High Networth (HNI)</option>
+                                </select>
+                            </div>
+
+                            <div class="spx-form-group">
+                                <label class="spx-form-label">Select Number of Lots</label>
+                                <select id="ipoLotSelect" class="spx-form-input" onchange="updateIpoBid()">
+                                    <option value="1">1 Lot (33 Shares)</option>
+                                    <option value="2">2 Lots (66 Shares)</option>
+                                    <option value="3">3 Lots (99 Shares)</option>
+                                    <option value="5">5 Lots (165 Shares)</option>
+                                    <option value="10">10 Lots (330 Shares)</option>
+                                </select>
+                            </div>
+
+                            <div class="spx-form-group">
+                                <label class="spx-form-label">Bid Price (Cut-off)</label>
+                                <input type="text" class="spx-form-input" value="₹445.00 (Cut-Off Price)" readonly style="background: #faf8fd;">
+                            </div>
+
+                            <div class="spx-calc-res-box" style="margin-bottom: 20px;">
+                                <div class="spx-calc-res-item">
+                                    <span>Total Shares</span>
+                                    <strong id="ipoTotalShares">33 Shares</strong>
+                                </div>
+                                <div class="spx-calc-res-item spx-calc-res-total">
+                                    <span>Calculated Bid Amount</span>
+                                    <span id="ipoBidAmount" class="val">₹14,685.00</span>
+                                </div>
+                            </div>
+
+                            <button class="spx-btn-primary" style="width: 100%; justify-content: center;" onclick="openIpoConfirmModal()">Apply for IPO</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+
+        <footer class="spx-portal-footer">
+            <div class="spx-footer-container"><div class="spx-footer-copy">&copy; 2026 SPX BANK. All rights reserved.</div></div>
+        </footer>
+
+    </div>
+
+    <!-- IPO CONFIRMATION MODAL -->
+    <div id="ipoConfirmModal" class="spx-modal-backdrop">
+        <div class="spx-modal-card">
+            <button class="spx-modal-close" onclick="closeAllModals()">&times;</button>
+            <h3 style="color: #2d103f; font-size: 1.25rem; margin-bottom: 16px;">Confirm IPO Bid Application</h3>
+            
+            <div class="spx-form-group">
+                <label class="spx-form-label">Payment Mode / ASBA Source</label>
+                <select id="ipoPaymentMode" class="spx-form-input">
+                    <option value="ASBA">SPX Direct Savings Account (#8849-XXXX-2049)</option>
+                    <option value="UPI">UPI ID (e.g. user@okhdfcbank)</option>
+                </select>
+            </div>
+
+            <div style="background: #faf8fd; padding: 14px; border-radius: 10px; margin-bottom: 18px; font-size: 0.88rem; color: #333;">
+                <div>Company: <strong>TechVista Solutions Ltd</strong></div>
+                <div>Bidded Quantity: <strong id="modalQty">1 Lot (33 Shares)</strong></div>
+                <div>Cut-Off Price: <strong>₹445.00</strong></div>
+                <div>Total Amount Blocked: <strong id="modalAmt" style="color: var(--spx-accent-purple);">₹14,685.00</strong></div>
+            </div>
+
+            <div class="spx-form-group">
+                <label class="spx-form-label">Enter 4-Digit Net-Banking MPIN / OTP</label>
+                <input type="password" id="securityMpinInput" class="spx-form-input" maxlength="4" placeholder="••••">
+            </div>
+
+            <button class="spx-btn-primary" style="width: 100%; justify-content: center;" onclick="executeSecurityConfirm()">Confirm Application</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/investments.js') }}"></script>
+    <script>
+        const cutOffPrice = 445;
+        const sharesPerLot = 33;
+
+        function updateIpoBid() {
+            const lots = parseInt(document.getElementById('ipoLotSelect').value);
+            const totalShares = lots * sharesPerLot;
+            const totalAmt = totalShares * cutOffPrice;
+
+            document.getElementById('ipoTotalShares').textContent = totalShares + ' Shares';
+            document.getElementById('ipoBidAmount').textContent = '₹' + totalAmt.toLocaleString('en-IN', {minimumFractionDigits:2});
+            document.getElementById('modalQty').textContent = `${lots} Lot (${totalShares} Shares)`;
+            document.getElementById('modalAmt').textContent = '₹' + totalAmt.toLocaleString('en-IN', {minimumFractionDigits:2});
+        }
+
+        function openIpoConfirmModal() {
+            updateIpoBid();
+            openModal('ipoConfirmModal');
+        }
+
+        pendingActionCallback = () => {
+            showToast('IPO Application for TechVista Solutions Ltd submitted & ASBA amount blocked!', 'success');
+            setTimeout(() => window.location.href = '/investments/ipo?tab=my-applications', 1500);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPX BANK - Demat & Securities</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/favicon/favicon.png') }}">
+    <meta name="description" content="SPX BANK Demat & Securities Portfolio and Online Trading.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="portal-wrapper">
+
+        <div class="spx-top-nav">
+            <div class="spx-top-nav-container">
+                <div class="spx-top-nav-left"><span class="spx-top-tab">Banking</span></div>
+                <div class="spx-top-nav-right">
+                    <a href="tel:1800111101" class="spx-top-link spx-icon-link">1800-11-1101</a>
+                    <button class="spx-logout-btn" onclick="window.location.href='/logout'">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <header class="spx-main-header">
+            <div class="spx-header-container">
+                <div class="spx-logo-block" onclick="window.location.href='/'">
+                    <span class="spx-text">SPX BANK</span>
+                    <span class="net-banking-tag">NET-BANKING</span>
+                </div>
+                <nav class="spx-main-nav">
+                    <div class="spx-nav-menu logged-in-menu">
+                        <a href="/home/landingPage/homePage" class="spx-nav-item">Overview</a>
+                        <a href="/home/landingPage/manageRelationship/transactionAccounts" class="spx-nav-item">Accounts</a>
+                        <a id="nav-investments-tab" class="spx-nav-item active" href="/investments">Investments</a>
+                    </div>
+                </nav>
+                {% include 'components/investments_mega_menu.html' %}
+                <div class="spx-header-actions">
+                    <div class="spx-user-badge"><span class="spx-avatar-initials">JD</span></div>
+                </div>
+            </div>
+        </header>
+
+        <main class="spx-portal-body">
+            <div class="spx-investments-container">
+
+                <nav class="spx-breadcrumb-nav">
+                    <a href="/home/landingPage/homePage">Home</a>
+                    <span class="separator">&gt;</span>
+                    <a href="/investments">Investments</a>
+                    <span class="separator">&gt;</span>
+                    <span class="current">Demat & Securities</span>
+                </nav>
+
+                <!-- HERO SECTION -->
+                <section class="spx-inv-hero">
+                    <div class="spx-inv-hero-content">
+                        <h1>Demat & Securities</h1>
+                        <p>Manage your stock portfolio, bonds, and securities securely from one single integrated net-banking dashboard.</p>
+                        <div class="spx-hero-actions">
+                            <a href="#demat-portfolio" class="spx-btn-primary">View Holdings</a>
+                            <a href="#open-demat" class="spx-btn-secondary">Open Demat Account</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- OPEN DEMAT BANNER (Shown if user needs account or for easy creation) -->
+                <section id="open-demat" class="spx-portfolio-section" style="margin-bottom: 40px; background: linear-gradient(135deg, #fcfaff 0%, #f3ecf7 100%);">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">Open Your Demat Account</h2>
+                            <p class="spx-section-subtitle">Experience paperless digital onboarding in under 2 minutes.</p>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 24px;">
+                        <div style="background: #ffffff; padding: 18px; border-radius: 12px; border: 1px solid #e5dcf0;">
+                            <strong style="color: #2d103f; display: block; margin-bottom: 4px;">Paperless Onboarding</strong>
+                            <span style="font-size: 0.84rem; color: var(--spx-text-gray);">100% digital e-KYC using Aadhaar</span>
+                        </div>
+                        <div style="background: #ffffff; padding: 18px; border-radius: 12px; border: 1px solid #e5dcf0;">
+                            <strong style="color: #2d103f; display: block; margin-bottom: 4px;">Secure Holdings</strong>
+                            <span style="font-size: 0.84rem; color: var(--spx-text-gray);">CDSL / NSDL integrated depository</span>
+                        </div>
+                        <div style="background: #ffffff; padding: 18px; border-radius: 12px; border: 1px solid #e5dcf0;">
+                            <strong style="color: #2d103f; display: block; margin-bottom: 4px;">Easy Tracking</strong>
+                            <span style="font-size: 0.84rem; color: var(--spx-text-gray);">Live market depth & automated P&L</span>
+                        </div>
+                        <div style="background: #ffffff; padding: 18px; border-radius: 12px; border: 1px solid #e5dcf0;">
+                            <strong style="color: #2d103f; display: block; margin-bottom: 4px;">Online Trading Access</strong>
+                            <span style="font-size: 0.84rem; color: var(--spx-text-gray);">0% brokerage for delivery orders</span>
+                        </div>
+                    </div>
+
+                    <button class="spx-btn-primary" onclick="confirmOpenDemat()">Open Demat Account Now</button>
+                </section>
+
+                <!-- MY DEMAT PORTFOLIO SUMMARY -->
+                <section id="demat-portfolio" class="spx-portfolio-section">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">My Demat Portfolio</h2>
+                            <p class="spx-section-subtitle">Demat Account Number: <strong>#1204-XXXX-8819</strong> (Active)</p>
+                        </div>
+                    </div>
+
+                    <div class="spx-summary-cards-grid">
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Total Holdings</div>
+                            <div class="spx-scard-value">3 Securities</div>
+                        </div>
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Invested Value</div>
+                            <div class="spx-scard-value">₹84,500.00</div>
+                        </div>
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Current Value</div>
+                            <div class="spx-scard-value">₹96,820.00</div>
+                        </div>
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Overall Gain / Loss</div>
+                            <div class="spx-scard-value" style="color: #16a34a;">+₹12,320.00</div>
+                            <div class="spx-scard-badge-green">+14.58%</div>
+                        </div>
+                    </div>
+
+                    <!-- HOLDINGS TABLE -->
+                    <div class="spx-table-container">
+                        <table class="spx-table">
+                            <thead>
+                                <tr>
+                                    <th>Security</th>
+                                    <th>Quantity</th>
+                                    <th>Avg. Price</th>
+                                    <th>Current Price</th>
+                                    <th>Invested Value</th>
+                                    <th>Current Value</th>
+                                    <th>Gain / Loss</th>
+                                    <th>Gain %</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>SPX CORP (SPX)</strong>
+                                        <div style="font-size: 0.75rem; color: #666;">Banking & Financials</div>
+                                    </td>
+                                    <td>30</td>
+                                    <td>₹1,150.00</td>
+                                    <td>₹1,245.50</td>
+                                    <td>₹34,500.00</td>
+                                    <td>₹37,365.00</td>
+                                    <td style="color: #16a34a; font-weight: 700;">+₹2,865.00</td>
+                                    <td><span class="spx-badge completed">+8.30%</span></td>
+                                    <td>
+                                        <button class="spx-btn-card-secondary" style="padding: 4px 8px; font-size: 0.78rem;" onclick="window.location.href='/investments/securities/1'">View</button>
+                                        <button class="spx-btn-card-primary" style="padding: 4px 8px; font-size: 0.78rem;" onclick="window.location.href='/investments/securities/1'">Trade</button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <strong>RELIANCE IND (RELIANCE)</strong>
+                                        <div style="font-size: 0.75rem; color: #666;">Energy</div>
+                                    </td>
+                                    <td>15</td>
+                                    <td>₹2,800.00</td>
+                                    <td>₹2,940.00</td>
+                                    <td>₹42,000.00</td>
+                                    <td>₹44,100.00</td>
+                                    <td style="color: #16a34a; font-weight: 700;">+₹2,100.00</td>
+                                    <td><span class="spx-badge completed">+5.00%</span></td>
+                                    <td>
+                                        <button class="spx-btn-card-secondary" style="padding: 4px 8px; font-size: 0.78rem;" onclick="window.location.href='/investments/securities/3'">View</button>
+                                        <button class="spx-btn-card-primary" style="padding: 4px 8px; font-size: 0.78rem;" onclick="window.location.href='/investments/securities/3'">Trade</button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <strong>INFOSYS LTD (INFY)</strong>
+                                        <div style="font-size: 0.75rem; color: #666;">Information Technology</div>
+                                    </td>
+                                    <td>10</td>
+                                    <td>₹1,600.00</td>
+                                    <td>₹1,780.40</td>
+                                    <td>₹16,000.00</td>
+                                    <td>₹17,804.00</td>
+                                    <td style="color: #16a34a; font-weight: 700;">+₹1,804.00</td>
+                                    <td><span class="spx-badge completed">+11.28%</span></td>
+                                    <td>
+                                        <button class="spx-btn-card-secondary" style="padding: 4px 8px; font-size: 0.78rem;" onclick="window.location.href='/investments/securities/4'">View</button>
+                                        <button class="spx-btn-card-primary" style="padding: 4px 8px; font-size: 0.78rem;" onclick="window.location.href='/investments/securities/4'">Trade</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <footer class="spx-portal-footer">
+            <div class="spx-footer-container"><div class="spx-footer-copy">&copy; 2026 SPX BANK. All rights reserved.</div></div>
+        </footer>
+
+    </div>
+
+    <!-- SECURITY CONFIRM MODAL -->
+    <div id="securityConfirmModal" class="spx-modal-backdrop">
+        <div class="spx-modal-card">
+            <button class="spx-modal-close" onclick="closeAllModals()">&times;</button>
+            <h3 id="securityModalTitle" style="color: #2d103f; font-size: 1.25rem; margin-bottom: 12px;">Security Verification</h3>
+            <div id="securityModalDetails" style="background: #faf8fd; padding: 14px; border-radius: 10px; margin-bottom: 18px; font-size: 0.88rem; color: #444;"></div>
+            <div class="spx-form-group">
+                <label class="spx-form-label">Enter 4-Digit Net-Banking MPIN / OTP</label>
+                <input type="password" id="securityMpinInput" class="spx-form-input" maxlength="4" placeholder="••••">
+            </div>
+            <button class="spx-btn-primary" style="width: 100%; justify-content: center;" onclick="executeSecurityConfirm()">Confirm Opening</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/investments.js') }}"></script>
+    <script>
+        function confirmOpenDemat() {
+            promptSecurityConfirmation('Open SPX Demat & Trading Account', `
+                <strong>Demat Registration Summary:</strong><br>
+                Depository: CDSL / NSDL<br>
+                Account Type: Single Trading Account<br>
+                Maintenance Fee: ₹0 / Year
+            `, () => {
+                showToast('Demat Account #1204-8890-1123 successfully created!', 'success');
+            });
+        }
+    </script>
+</body>
+</html>

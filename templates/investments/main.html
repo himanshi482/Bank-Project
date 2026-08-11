@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPX BANK - Investment Portal</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/favicon/favicon.png') }}">
+    <meta name="description" content="SPX BANK Wealth Portal — Mutual Funds, NPS, PPF, IPO, Demat & Securities.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="portal-wrapper">
+
+        <!-- TOP NAVIGATION STRIP -->
+        <div class="spx-top-nav">
+            <div class="spx-top-nav-container">
+                <div class="spx-top-nav-left">
+                    <span class="spx-top-tab">Banking</span>
+                </div>
+                <div class="spx-top-nav-right">
+                    <a href="#" class="spx-top-link spx-icon-link">
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        Get Help
+                    </a>
+                    <a href="tel:1800111101" class="spx-top-link spx-icon-link">
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        1800-11-1101
+                    </a>
+                    <div class="spx-top-link spx-lang-selector">
+                        English
+                        <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                    <span class="spx-top-divider">|</span>
+                    <button class="spx-font-btn">A-</button>
+                    <button class="spx-font-btn">A</button>
+                    <button class="spx-font-btn">A+</button>
+                    <span class="spx-top-divider">|</span>
+                    <button class="spx-logout-btn" onclick="window.location.href='/logout'">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN HEADER -->
+        <header class="spx-main-header">
+            <div class="spx-header-container">
+                <div class="spx-logo-block" onclick="window.location.href='/'">
+                    <span class="spx-text">SPX BANK</span>
+                    <span class="net-banking-tag">NET-BANKING</span>
+                </div>
+
+                <nav class="spx-main-nav">
+                    <div class="spx-nav-menu logged-in-menu">
+                        <a href="/home/landingPage/homePage" class="spx-nav-item">Overview</a>
+                        <a href="/home/landingPage/manageRelationship/transactionAccounts" class="spx-nav-item">Accounts</a>
+                        <a id="nav-payments-tab" class="spx-nav-item" href="#">Payments</a>
+                        <a id="nav-deposits-tab" class="spx-nav-item" href="#">Deposits</a>
+                        <a id="nav-loans-tab" class="spx-nav-item" href="#">Loans</a>
+                        <a id="nav-cards-tab" class="spx-nav-item" href="#">Cards</a>
+                        <a id="nav-investments-tab" class="spx-nav-item active" href="/investments">Investments</a>
+                        <a id="nav-insurance-tab" class="spx-nav-item" href="#">Insurance</a>
+                        <a id="nav-services-tab" class="spx-nav-item" href="#">Services</a>
+                        {% include 'components/services_mega_menu.html' %}
+                    </div>
+                </nav>
+
+                {% include 'components/mega_menu.html' %}
+                {% include 'components/deposits_mega_menu.html' %}
+                {% include 'components/loans_mega_menu.html' %}
+                {% include 'components/cards_mega_menu.html' %}
+                {% include 'components/investments_mega_menu.html' %}
+                {% include 'components/insurance_mega_menu.html' %}
+
+                <div class="spx-header-actions">
+                    <button class="spx-header-icon-btn">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </button>
+                    <button class="spx-header-icon-btn">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    </button>
+                    <div class="spx-user-badge">
+                        <span class="spx-avatar-initials" id="dash-avatar">JD</span>
+                        <span class="spx-user-profile-label">My Profile</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN BODY CONTENT -->
+        <main class="spx-portal-body">
+            <div class="spx-investments-container">
+
+                <!-- BREADCRUMB -->
+                <nav class="spx-breadcrumb-nav">
+                    <a href="/home/landingPage/homePage">Home</a>
+                    <span class="separator">&gt;</span>
+                    <span class="current">Investments</span>
+                </nav>
+
+                <!-- HERO SECTION -->
+                <section class="spx-inv-hero">
+                    <div class="spx-inv-hero-content">
+                        <div class="spx-hero-tag">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            SPX Wealth Suite
+                        </div>
+                        <h1>Grow Your Wealth with SPX BANK</h1>
+                        <p>Explore smart investment options designed to help you achieve your financial goals with guaranteed security, competitive returns, and seamless digital access.</p>
+                        <div class="spx-hero-actions">
+                            <a href="#explore-products" class="spx-btn-primary">
+                                Start Investing
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            </a>
+                            <a href="#portfolio-summary" class="spx-btn-secondary">Explore Investments</a>
+                        </div>
+                    </div>
+
+                    <div class="spx-inv-hero-graphic">
+                        <div class="spx-hero-card-preview">
+                            <div class="spx-hcard-header">
+                                <span class="spx-hcard-title">Portfolio Balance</span>
+                                <span class="spx-hcard-badge">+11.40% YoY</span>
+                            </div>
+                            <div class="spx-hcard-val">₹27,850.00</div>
+                            <div class="spx-hcard-sub">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                                Today's Gain: +₹320.00 (+1.16%)
+                            </div>
+                            <div class="spx-hcard-mini-chart">
+                                <svg viewBox="0 0 200 40" width="100%" height="40" fill="none" stroke="#6d1c7f" stroke-width="3">
+                                    <path d="M0,35 Q30,25 60,30 T120,15 T180,10 T200,5" fill="none"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: EXPLORE INVESTMENT PRODUCTS -->
+                <section id="explore-products" class="spx-section-block">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">Explore Investment Products</h2>
+                            <p class="spx-section-subtitle">Select from our premier portfolio of high-growth investment solutions.</p>
+                        </div>
+                    </div>
+
+                    <div class="spx-products-grid">
+
+                        <!-- 1. MUTUAL FUNDS -->
+                        <div class="spx-product-card">
+                            <div class="spx-product-card-top">
+                                <div class="spx-product-icon-wrap">
+                                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 20h10"></path><path d="M10 20c5.5-5.5.5-16 .5-16"></path><path d="M10.5 4.5c2.5 2.5 2.5 7 0 9.5"></path></svg>
+                                </div>
+                                <h3 class="spx-product-title">Mutual Funds</h3>
+                            </div>
+                            <p class="spx-product-desc">Invest in diversified mutual fund schemes through SIP or lump-sum investments.</p>
+                            <div class="spx-product-benefit-tag">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                High Return Growth Potential
+                            </div>
+                            <div class="spx-product-actions">
+                                <a href="/investments/mutual-funds" class="spx-btn-card-primary">Explore Mutual Funds</a>
+                                <a href="/investments/mutual-funds#sip-calc" class="spx-btn-card-secondary">Start SIP</a>
+                            </div>
+                        </div>
+
+                        <!-- 2. NPS -->
+                        <div class="spx-product-card">
+                            <div class="spx-product-card-top">
+                                <div class="spx-product-icon-wrap">
+                                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12A10 10 0 0 0 2 12h20Z"></path><path d="M12 12v8a2 2 0 0 4 0"></path></svg>
+                                </div>
+                                <h3 class="spx-product-title">NPS</h3>
+                            </div>
+                            <p class="spx-product-desc">Build a retirement corpus with the National Pension System and secure your golden years.</p>
+                            <div class="spx-product-benefit-tag">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Extra Tax Savings under 80CCD
+                            </div>
+                            <div class="spx-product-actions">
+                                <a href="/investments/nps#open-nps" class="spx-btn-card-primary">Open NPS Account</a>
+                                <a href="/investments/nps" class="spx-btn-card-secondary">Manage NPS</a>
+                            </div>
+                        </div>
+
+                        <!-- 3. PPF -->
+                        <div class="spx-product-card">
+                            <div class="spx-product-card-top">
+                                <div class="spx-product-icon-wrap">
+                                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8a4 4 0 0 0 4-4v-3a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v3a4 4 0 0 0 4 4z"></path><circle cx="12" cy="15" r="2"></circle><path d="M10 10s1.5-4 2-4 2 4 2 4"></path></svg>
+                                </div>
+                                <h3 class="spx-product-title">PPF</h3>
+                            </div>
+                            <p class="spx-product-desc">Build long-term savings with a government-backed investment option and tax-free returns.</p>
+                            <div class="spx-product-benefit-tag">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                7.1% p.a. Guaranteed Interest
+                            </div>
+                            <div class="spx-product-actions">
+                                <a href="/investments/ppf#open-ppf" class="spx-btn-card-primary">Open PPF Account</a>
+                                <a href="/investments/ppf" class="spx-btn-card-secondary">Manage PPF</a>
+                            </div>
+                        </div>
+
+                        <!-- 4. IPO -->
+                        <div class="spx-product-card">
+                            <div class="spx-product-card-top">
+                                <div class="spx-product-icon-wrap">
+                                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                </div>
+                                <h3 class="spx-product-title">IPO</h3>
+                            </div>
+                            <p class="spx-product-desc">Apply for new public offerings and track your IPO applications with instant ASBA blocking.</p>
+                            <div class="spx-product-benefit-tag">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Direct Primary Market Allotment
+                            </div>
+                            <div class="spx-product-actions">
+                                <a href="/investments/ipo" class="spx-btn-card-primary">Explore IPOs</a>
+                                <a href="/investments/ipo?tab=my-applications" class="spx-btn-card-secondary">My Applications</a>
+                            </div>
+                        </div>
+
+                        <!-- 5. DEMAT & SECURITIES -->
+                        <div class="spx-product-card">
+                            <div class="spx-product-card-top">
+                                <div class="spx-product-icon-wrap">
+                                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                                </div>
+                                <h3 class="spx-product-title">Demat & Securities</h3>
+                            </div>
+                            <p class="spx-product-desc">Manage your securities and access your investment portfolio with seamless 24/7 trading.</p>
+                            <div class="spx-product-benefit-tag">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Zero Account Maintenance Fee
+                            </div>
+                            <div class="spx-product-actions">
+                                <a href="/investments/demat#open-demat" class="spx-btn-card-primary">Open Demat Account</a>
+                                <a href="/investments/demat" class="spx-btn-card-secondary">View Portfolio</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- SECTION: INVESTMENT PORTFOLIO SUMMARY -->
+                <section id="portfolio-summary" class="spx-portfolio-section">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">Your Investment Overview</h2>
+                            <p class="spx-section-subtitle">Real-time consolidated tracking of all your active investments.</p>
+                        </div>
+                        <a href="/investments/demat" class="spx-btn-card-secondary">View Full Portfolio</a>
+                    </div>
+
+                    <!-- 4 SUMMARY CARDS -->
+                    <div class="spx-summary-cards-grid">
+
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Total Investment</div>
+                            <div class="spx-scard-value">₹25,000.00</div>
+                        </div>
+
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Current Value</div>
+                            <div class="spx-scard-value">₹27,850.00</div>
+                        </div>
+
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Total Returns</div>
+                            <div class="spx-scard-value" style="color: #16a34a;">+₹2,850.00</div>
+                            <div class="spx-scard-badge-green">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                                +11.40% Overall
+                            </div>
+                        </div>
+
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Today's Change</div>
+                            <div class="spx-scard-value" style="color: #16a34a;">+₹320.00</div>
+                            <div class="spx-scard-badge-green">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                                +1.16% Today
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- PERFORMANCE CHART -->
+                    <div class="spx-chart-wrapper">
+                        <div class="spx-chart-header">
+                            <span class="spx-chart-title">Portfolio Performance History</span>
+                            <div class="spx-timeframe-selector">
+                                <button class="spx-tf-btn" onclick="updatePortfolioTimeframe('1M', this)">1M</button>
+                                <button class="spx-tf-btn" onclick="updatePortfolioTimeframe('3M', this)">3M</button>
+                                <button class="spx-tf-btn" onclick="updatePortfolioTimeframe('6M', this)">6M</button>
+                                <button class="spx-tf-btn active" onclick="updatePortfolioTimeframe('1Y', this)">1Y</button>
+                                <button class="spx-tf-btn" onclick="updatePortfolioTimeframe('3Y', this)">3Y</button>
+                                <button class="spx-tf-btn" onclick="updatePortfolioTimeframe('5Y', this)">5Y</button>
+                            </div>
+                        </div>
+                        <div class="spx-canvas-container">
+                            <canvas id="portfolioCanvas"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: QUICK ACTIONS -->
+                <section class="spx-quick-actions-section">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">Quick Actions</h2>
+                            <p class="spx-section-subtitle">Fast links to perform frequent investment tasks.</p>
+                        </div>
+                    </div>
+
+                    <div class="spx-quick-actions-grid">
+
+                        <a href="/investments/mutual-funds#sip-calc" class="spx-quick-action-btn">
+                            <div class="spx-qa-icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            </div>
+                            <span class="spx-qa-label">Start SIP</span>
+                        </a>
+
+                        <a href="/investments/mutual-funds" class="spx-quick-action-btn">
+                            <div class="spx-qa-icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                            </div>
+                            <span class="spx-qa-label">Invest Mutual Fund</span>
+                        </a>
+
+                        <a href="/investments/ppf#open-ppf" class="spx-quick-action-btn">
+                            <div class="spx-qa-icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8a4 4 0 0 0 4-4v-3a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v3a4 4 0 0 0 4 4z"></path></svg>
+                            </div>
+                            <span class="spx-qa-label">Open PPF</span>
+                        </a>
+
+                        <a href="/investments/nps#open-nps" class="spx-quick-action-btn">
+                            <div class="spx-qa-icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg>
+                            </div>
+                            <span class="spx-qa-label">Open NPS</span>
+                        </a>
+
+                        <a href="/investments/ipo" class="spx-quick-action-btn">
+                            <div class="spx-qa-icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                            </div>
+                            <span class="spx-qa-label">Apply for IPO</span>
+                        </a>
+
+                        <a href="/investments/demat#open-demat" class="spx-quick-action-btn">
+                            <div class="spx-qa-icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect></svg>
+                            </div>
+                            <span class="spx-qa-label">Open Demat</span>
+                        </a>
+
+                        <a href="/investments/demat" class="spx-quick-action-btn">
+                            <div class="spx-qa-icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+                            </div>
+                            <span class="spx-qa-label">View Portfolio</span>
+                        </a>
+
+                        <a href="/investments/transactions" class="spx-quick-action-btn">
+                            <div class="spx-qa-icon">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                            </div>
+                            <span class="spx-qa-label">Transactions</span>
+                        </a>
+
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="spx-portal-footer">
+            <div class="spx-footer-container">
+                <div class="spx-footer-links">
+                    <a href="#about">About Us</a>
+                    <span class="spx-footer-divider">|</span>
+                    <a href="#terms">Terms & Conditions</a>
+                    <span class="spx-footer-divider">|</span>
+                    <a href="#privacy">Privacy Policy</a>
+                </div>
+                <div class="spx-footer-copy">&copy; 2026 SPX BANK. All rights reserved.</div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/investments.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPX BANK - Mutual Funds</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/favicon/favicon.png') }}">
+    <meta name="description" content="SPX BANK Mutual Funds Portal — Explore equity, hybrid, debt schemes and SIP calculators.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="portal-wrapper">
+
+        <div class="spx-top-nav">
+            <div class="spx-top-nav-container">
+                <div class="spx-top-nav-left">
+                    <span class="spx-top-tab">Banking</span>
+                </div>
+                <div class="spx-top-nav-right">
+                    <a href="#" class="spx-top-link spx-icon-link">Get Help</a>
+                    <a href="tel:1800111101" class="spx-top-link spx-icon-link">1800-11-1101</a>
+                    <div class="spx-top-link spx-lang-selector">English</div>
+                    <span class="spx-top-divider">|</span>
+                    <button class="spx-logout-btn" onclick="window.location.href='/logout'">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <header class="spx-main-header">
+            <div class="spx-header-container">
+                <div class="spx-logo-block" onclick="window.location.href='/'">
+                    <span class="spx-text">SPX BANK</span>
+                    <span class="net-banking-tag">NET-BANKING</span>
+                </div>
+
+                <nav class="spx-main-nav">
+                    <div class="spx-nav-menu logged-in-menu">
+                        <a href="/home/landingPage/homePage" class="spx-nav-item">Overview</a>
+                        <a href="/home/landingPage/manageRelationship/transactionAccounts" class="spx-nav-item">Accounts</a>
+                        <a id="nav-payments-tab" class="spx-nav-item" href="#">Payments</a>
+                        <a id="nav-deposits-tab" class="spx-nav-item" href="#">Deposits</a>
+                        <a id="nav-loans-tab" class="spx-nav-item" href="#">Loans</a>
+                        <a id="nav-cards-tab" class="spx-nav-item" href="#">Cards</a>
+                        <a id="nav-investments-tab" class="spx-nav-item active" href="/investments">Investments</a>
+                        <a id="nav-insurance-tab" class="spx-nav-item" href="#">Insurance</a>
+                        <a id="nav-services-tab" class="spx-nav-item" href="#">Services</a>
+                        {% include 'components/services_mega_menu.html' %}
+                    </div>
+                </nav>
+
+                {% include 'components/mega_menu.html' %}
+                {% include 'components/deposits_mega_menu.html' %}
+                {% include 'components/loans_mega_menu.html' %}
+                {% include 'components/cards_mega_menu.html' %}
+                {% include 'components/investments_mega_menu.html' %}
+                {% include 'components/insurance_mega_menu.html' %}
+
+                <div class="spx-header-actions">
+                    <div class="spx-user-badge">
+                        <span class="spx-avatar-initials">JD</span>
+                        <span class="spx-user-profile-label">My Profile</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="spx-portal-body">
+            <div class="spx-investments-container">
+
+                <nav class="spx-breadcrumb-nav">
+                    <a href="/home/landingPage/homePage">Home</a>
+                    <span class="separator">&gt;</span>
+                    <a href="/investments">Investments</a>
+                    <span class="separator">&gt;</span>
+                    <span class="current">Mutual Funds</span>
+                </nav>
+
+                <!-- HERO SECTION -->
+                <section class="spx-inv-hero">
+                    <div class="spx-inv-hero-content">
+                        <h1>Invest in Mutual Funds</h1>
+                        <p>Choose investment options based on your financial goals, risk appetite and investment horizon to maximize compounding growth.</p>
+                        <div class="spx-hero-actions">
+                            <a href="#sip-calc" class="spx-btn-primary">Start SIP</a>
+                            <a href="#choose-fund" class="spx-btn-secondary">Invest Now</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CHOOSE YOUR FUND SECTION -->
+                <section id="choose-fund" class="spx-section-block" style="margin-bottom: 40px;">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">Choose Your Fund</h2>
+                            <p class="spx-section-subtitle">Filter top-rated schemes across asset classes.</p>
+                        </div>
+                    </div>
+
+                    <!-- CATEGORY TABS -->
+                    <div class="spx-filter-tabs">
+                        <button class="spx-tab-item active" onclick="filterFundCategory('popular', this)">Popular Funds</button>
+                        <button class="spx-tab-item" onclick="filterFundCategory('nfo', this)">New Fund Offers (NFO)</button>
+                        <button class="spx-tab-item" onclick="filterFundCategory('equity', this)">Equity Funds</button>
+                        <button class="spx-tab-item" onclick="filterFundCategory('hybrid', this)">Hybrid Funds</button>
+                        <button class="spx-tab-item" onclick="filterFundCategory('debt', this)">Debt Funds</button>
+                        <button class="spx-tab-item" onclick="filterFundCategory('solution', this)">Solution Oriented</button>
+                        <button class="spx-tab-item" onclick="filterFundCategory('other', this)">Other Funds</button>
+                    </div>
+
+                    <!-- FUND CARDS GRID -->
+                    <div class="spx-fund-cards-grid">
+
+                        <!-- Fund Card 1 -->
+                        <div class="spx-fund-card" data-category="popular equity">
+                            <div class="spx-fund-head">
+                                <div>
+                                    <h3 class="spx-fund-name">SPX Large Cap Flexi Equity Fund</h3>
+                                    <span class="spx-fund-cat">Equity • Flexi Cap</span>
+                                </div>
+                                <span class="spx-risk-badge very-high">Very High Risk</span>
+                            </div>
+                            <div class="spx-fund-returns-grid">
+                                <div>
+                                    <div class="spx-ret-val">22.4%</div>
+                                    <div class="spx-ret-lbl">1Y Return</div>
+                                </div>
+                                <div>
+                                    <div class="spx-ret-val">18.2%</div>
+                                    <div class="spx-ret-lbl">3Y Return</div>
+                                </div>
+                                <div>
+                                    <div class="spx-ret-val">16.5%</div>
+                                    <div class="spx-ret-lbl">5Y Return</div>
+                                </div>
+                            </div>
+                            <div class="spx-fund-meta-row">
+                                <span>Min Investment: <strong>₹500</strong></span>
+                                <span>AUM: <strong>₹14,250 Cr</strong></span>
+                                <span>NAV: <strong>₹142.85</strong></span>
+                            </div>
+                            <div class="spx-product-actions">
+                                <a href="/investments/mutual-funds/1" class="spx-btn-card-secondary">View Details</a>
+                                <button class="spx-btn-card-primary" onclick="openInvestModal('SPX Large Cap Flexi Equity Fund', 500)">Invest Now</button>
+                            </div>
+                        </div>
+
+                        <!-- Fund Card 2 -->
+                        <div class="spx-fund-card" data-category="popular equity">
+                            <div class="spx-fund-head">
+                                <div>
+                                    <h3 class="spx-fund-name">SPX Focused Bluechip Fund</h3>
+                                    <span class="spx-fund-cat">Equity • Large Cap</span>
+                                </div>
+                                <span class="spx-risk-badge very-high">Very High Risk</span>
+                            </div>
+                            <div class="spx-fund-returns-grid">
+                                <div>
+                                    <div class="spx-ret-val">19.8%</div>
+                                    <div class="spx-ret-lbl">1Y Return</div>
+                                </div>
+                                <div>
+                                    <div class="spx-ret-val">16.9%</div>
+                                    <div class="spx-ret-lbl">3Y Return</div>
+                                </div>
+                                <div>
+                                    <div class="spx-ret-val">15.2%</div>
+                                    <div class="spx-ret-lbl">5Y Return</div>
+                                </div>
+                            </div>
+                            <div class="spx-fund-meta-row">
+                                <span>Min Investment: <strong>₹1,000</strong></span>
+                                <span>AUM: <strong>₹22,100 Cr</strong></span>
+                                <span>NAV: <strong>₹88.40</strong></span>
+                            </div>
+                            <div class="spx-product-actions">
+                                <a href="/investments/mutual-funds/2" class="spx-btn-card-secondary">View Details</a>
+                                <button class="spx-btn-card-primary" onclick="openInvestModal('SPX Focused Bluechip Fund', 1000)">Invest Now</button>
+                            </div>
+                        </div>
+
+                        <!-- Fund Card 3 -->
+                        <div class="spx-fund-card" data-category="debt popular">
+                            <div class="spx-fund-head">
+                                <div>
+                                    <h3 class="spx-fund-name">SPX Dynamic Debt Scheme</h3>
+                                    <span class="spx-fund-cat">Debt • Low Duration</span>
+                                </div>
+                                <span class="spx-risk-badge low">Low Risk</span>
+                            </div>
+                            <div class="spx-fund-returns-grid">
+                                <div>
+                                    <div class="spx-ret-val">7.6%</div>
+                                    <div class="spx-ret-lbl">1Y Return</div>
+                                </div>
+                                <div>
+                                    <div class="spx-ret-val">7.2%</div>
+                                    <div class="spx-ret-lbl">3Y Return</div>
+                                </div>
+                                <div>
+                                    <div class="spx-ret-val">7.0%</div>
+                                    <div class="spx-ret-lbl">5Y Return</div>
+                                </div>
+                            </div>
+                            <div class="spx-fund-meta-row">
+                                <span>Min Investment: <strong>₹500</strong></span>
+                                <span>AUM: <strong>₹8,900 Cr</strong></span>
+                                <span>NAV: <strong>₹34.20</strong></span>
+                            </div>
+                            <div class="spx-product-actions">
+                                <a href="/investments/mutual-funds/3" class="spx-btn-card-secondary">View Details</a>
+                                <button class="spx-btn-card-primary" onclick="openInvestModal('SPX Dynamic Debt Scheme', 500)">Invest Now</button>
+                            </div>
+                        </div>
+
+                        <!-- Fund Card 4 -->
+                        <div class="spx-fund-card" data-category="hybrid popular">
+                            <div class="spx-fund-head">
+                                <div>
+                                    <h3 class="spx-fund-name">SPX Balanced Advantage Fund</h3>
+                                    <span class="spx-fund-cat">Hybrid • Dynamic Asset</span>
+                                </div>
+                                <span class="spx-risk-badge moderate">Moderate Risk</span>
+                            </div>
+                            <div class="spx-fund-returns-grid">
+                                <div>
+                                    <div class="spx-ret-val">14.5%</div>
+                                    <div class="spx-ret-lbl">1Y Return</div>
+                                </div>
+                                <div>
+                                    <div class="spx-ret-val">13.8%</div>
+                                    <div class="spx-ret-lbl">3Y Return</div>
+                                </div>
+                                <div>
+                                    <div class="spx-ret-val">12.9%</div>
+                                    <div class="spx-ret-lbl">5Y Return</div>
+                                </div>
+                            </div>
+                            <div class="spx-fund-meta-row">
+                                <span>Min Investment: <strong>₹500</strong></span>
+                                <span>AUM: <strong>₹11,400 Cr</strong></span>
+                                <span>NAV: <strong>₹62.10</strong></span>
+                            </div>
+                            <div class="spx-product-actions">
+                                <a href="/investments/mutual-funds/4" class="spx-btn-card-secondary">View Details</a>
+                                <button class="spx-btn-card-primary" onclick="openInvestModal('SPX Balanced Advantage Fund', 500)">Invest Now</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- SIP CALCULATOR SECTION -->
+                <section id="sip-calc" class="spx-calculator-card">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">SIP Calculator</h2>
+                            <p class="spx-section-subtitle">Simulate potential growth of monthly systematic investments.</p>
+                        </div>
+                    </div>
+
+                    <div class="spx-calc-grid">
+                        <div>
+                            <div class="spx-calc-input-group">
+                                <div class="spx-calc-label">
+                                    <span>Monthly Investment</span>
+                                    <strong id="sipMonthlyVal">₹5,000</strong>
+                                </div>
+                                <input type="range" id="sipMonthly" class="spx-range-slider" min="500" max="100000" step="500" value="5000">
+                            </div>
+
+                            <div class="spx-calc-input-group">
+                                <div class="spx-calc-label">
+                                    <span>Expected Annual Return</span>
+                                    <strong id="sipReturnVal">12%</strong>
+                                </div>
+                                <input type="range" id="sipReturn" class="spx-range-slider" min="1" max="30" step="0.5" value="12">
+                            </div>
+
+                            <div class="spx-calc-input-group">
+                                <div class="spx-calc-label">
+                                    <span>Investment Duration</span>
+                                    <strong id="sipDurationVal">10 Yr</strong>
+                                </div>
+                                <input type="range" id="sipDuration" class="spx-range-slider" min="1" max="30" step="1" value="10">
+                            </div>
+                        </div>
+
+                        <div class="spx-calc-result-box">
+                            <div class="spx-calc-res-item">
+                                <span>Invested Amount</span>
+                                <strong id="sipInvested">₹600,000</strong>
+                            </div>
+                            <div class="spx-calc-res-item">
+                                <span>Estimated Returns</span>
+                                <strong id="sipReturns" style="color: #16a34a;">₹561,695</strong>
+                            </div>
+                            <div class="spx-calc-res-item spx-calc-res-total">
+                                <span>Total Projected Value</span>
+                                <span id="sipTotal" class="val">₹1,161,695</span>
+                            </div>
+                            <button class="spx-btn-primary" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="openInvestModal('SPX Large Cap Flexi Equity Fund (SIP)', 5000)">Start SIP</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MY MUTUAL FUND PORTFOLIO -->
+                <section class="spx-section-block">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">My Mutual Fund Portfolio</h2>
+                            <p class="spx-section-subtitle">Active investments under your SPX Net-Banking account.</p>
+                        </div>
+                    </div>
+
+                    <div class="spx-table-container">
+                        <table class="spx-table">
+                            <thead>
+                                <tr>
+                                    <th>Fund Name</th>
+                                    <th>Invested</th>
+                                    <th>Current Value</th>
+                                    <th>Returns</th>
+                                    <th>Returns %</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>SPX Large Cap Flexi Equity Fund</strong></td>
+                                    <td>₹15,000.00</td>
+                                    <td>₹17,420.00</td>
+                                    <td style="color: #16a34a; font-weight: 700;">+₹2,420.00</td>
+                                    <td><span class="spx-badge completed">+16.13%</span></td>
+                                    <td>
+                                        <button class="spx-btn-card-secondary" style="padding: 4px 10px; font-size: 0.78rem;" onclick="window.location.href='/investments/mutual-funds/1'">View</button>
+                                        <button class="spx-btn-card-primary" style="padding: 4px 10px; font-size: 0.78rem;" onclick="openInvestModal('SPX Large Cap Flexi Equity Fund', 1000)">Invest More</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>SPX Dynamic Debt Scheme</strong></td>
+                                    <td>₹10,000.00</td>
+                                    <td>₹10,430.00</td>
+                                    <td style="color: #16a34a; font-weight: 700;">+₹430.00</td>
+                                    <td><span class="spx-badge completed">+4.30%</span></td>
+                                    <td>
+                                        <button class="spx-btn-card-secondary" style="padding: 4px 10px; font-size: 0.78rem;" onclick="window.location.href='/investments/mutual-funds/3'">View</button>
+                                        <button class="spx-btn-card-primary" style="padding: 4px 10px; font-size: 0.78rem;" onclick="openInvestModal('SPX Dynamic Debt Scheme', 500)">Invest More</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <footer class="spx-portal-footer">
+            <div class="spx-footer-container">
+                <div class="spx-footer-links"><a href="#">Terms & Conditions</a> | <a href="#">Privacy Policy</a></div>
+                <div class="spx-footer-copy">&copy; 2026 SPX BANK. All rights reserved.</div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- INVESTMENT MODAL -->
+    <div id="investModal" class="spx-modal-backdrop">
+        <div class="spx-modal-card">
+            <button class="spx-modal-close" onclick="closeAllModals()">&times;</button>
+            <h3 id="modalFundTitle" style="color: #2d103f; font-size: 1.25rem; margin-bottom: 16px;">Invest in Mutual Fund</h3>
+            <div class="spx-form-group">
+                <label class="spx-form-label">Investment Type</label>
+                <select id="investType" class="spx-form-input">
+                    <option value="SIP">Monthly SIP</option>
+                    <option value="Lumpsum">Lump-sum Investment</option>
+                </select>
+            </div>
+            <div class="spx-form-group">
+                <label class="spx-form-label">Amount (₹)</label>
+                <input type="number" id="investAmount" class="spx-form-input" min="500" value="1000">
+            </div>
+            <div class="spx-form-group">
+                <label class="spx-form-label">Debit Account</label>
+                <input type="text" class="spx-form-input" value="SPX Savings Account (#8849-XXXX-2049)" readonly>
+            </div>
+            <button class="spx-btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="proceedToModalSecurity()">Proceed to Invest</button>
+        </div>
+    </div>
+
+    <!-- SECURITY CONFIRM MODAL -->
+    <div id="securityConfirmModal" class="spx-modal-backdrop">
+        <div class="spx-modal-card">
+            <button class="spx-modal-close" onclick="closeAllModals()">&times;</button>
+            <h3 id="securityModalTitle" style="color: #2d103f; font-size: 1.25rem; margin-bottom: 12px;">Confirm Transaction</h3>
+            <div id="securityModalDetails" style="background: #faf8fd; padding: 14px; border-radius: 10px; margin-bottom: 18px; font-size: 0.88rem; color: #444;"></div>
+            <div class="spx-form-group">
+                <label class="spx-form-label">Enter 4-Digit Net-Banking MPIN / OTP</label>
+                <input type="password" id="securityMpinInput" class="spx-form-input" maxlength="4" placeholder="••••">
+            </div>
+            <button class="spx-btn-primary" style="width: 100%; justify-content: center;" onclick="executeSecurityConfirm()">Confirm & Authorize</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/investments.js') }}"></script>
+    <script>
+        function filterFundCategory(cat, btn) {
+            document.querySelectorAll('.spx-tab-item').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+            document.querySelectorAll('.spx-fund-card').forEach(card => {
+                const cats = card.dataset.category || '';
+                if (cat === 'all' || cats.includes(cat)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function openInvestModal(fundName, minAmt) {
+            document.getElementById('modalFundTitle').textContent = 'Invest in ' + fundName;
+            document.getElementById('investAmount').value = minAmt || 1000;
+            document.getElementById('investAmount').min = minAmt || 500;
+            openModal('investModal');
+        }
+
+        function proceedToModalSecurity() {
+            const fundName = document.getElementById('modalFundTitle').textContent;
+            const amt = document.getElementById('investAmount').value;
+            const type = document.getElementById('investType').value;
+            if (!amt || amt < 500) {
+                showToast('Minimum investment amount is ₹500', 'error');
+                return;
+            }
+            closeAllModals();
+            promptSecurityConfirmation('Authorize Mutual Fund Order', `
+                <strong>Order Summary:</strong><br>
+                Scheme: ${fundName}<br>
+                Type: ${type}<br>
+                Amount: <strong>₹${parseFloat(amt).toLocaleString()}</strong><br>
+                Source: SPX Premier Checking Account
+            `, () => {
+                showToast(`Investment of ₹${parseFloat(amt).toLocaleString()} in ${fundName} successful!`, 'success');
+            });
+        }
+    </script>
+</body>
+</html>

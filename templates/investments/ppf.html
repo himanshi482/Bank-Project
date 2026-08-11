@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPX BANK - Public Provident Fund (PPF)</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/favicon/favicon.png') }}">
+    <meta name="description" content="SPX BANK PPF — Guaranteed government backed savings with tax-free interest.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="portal-wrapper">
+
+        <div class="spx-top-nav">
+            <div class="spx-top-nav-container">
+                <div class="spx-top-nav-left"><span class="spx-top-tab">Banking</span></div>
+                <div class="spx-top-nav-right">
+                    <a href="tel:1800111101" class="spx-top-link spx-icon-link">1800-11-1101</a>
+                    <button class="spx-logout-btn" onclick="window.location.href='/logout'">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <header class="spx-main-header">
+            <div class="spx-header-container">
+                <div class="spx-logo-block" onclick="window.location.href='/'">
+                    <span class="spx-text">SPX BANK</span>
+                    <span class="net-banking-tag">NET-BANKING</span>
+                </div>
+                <nav class="spx-main-nav">
+                    <div class="spx-nav-menu logged-in-menu">
+                        <a href="/home/landingPage/homePage" class="spx-nav-item">Overview</a>
+                        <a href="/home/landingPage/manageRelationship/transactionAccounts" class="spx-nav-item">Accounts</a>
+                        <a id="nav-investments-tab" class="spx-nav-item active" href="/investments">Investments</a>
+                    </div>
+                </nav>
+                {% include 'components/investments_mega_menu.html' %}
+                <div class="spx-header-actions">
+                    <div class="spx-user-badge"><span class="spx-avatar-initials">JD</span></div>
+                </div>
+            </div>
+        </header>
+
+        <main class="spx-portal-body">
+            <div class="spx-investments-container">
+
+                <nav class="spx-breadcrumb-nav">
+                    <a href="/home/landingPage/homePage">Home</a>
+                    <span class="separator">&gt;</span>
+                    <a href="/investments">Investments</a>
+                    <span class="separator">&gt;</span>
+                    <span class="current">Public Provident Fund</span>
+                </nav>
+
+                <!-- HERO SECTION -->
+                <section class="spx-inv-hero">
+                    <div class="spx-inv-hero-content">
+                        <h1>Public Provident Fund</h1>
+                        <p>Build long-term savings with disciplined contributions and secure growth backed by the Government of India with EEE tax exemption benefits.</p>
+                        <div class="spx-hero-actions">
+                            <a href="#open-ppf" class="spx-btn-primary">Open PPF Account</a>
+                            <a href="#my-ppf" class="spx-btn-secondary">Manage PPF</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MY PPF ACCOUNT SUMMARY -->
+                <section id="my-ppf" class="spx-portfolio-section" style="margin-bottom: 40px;">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">My PPF Account</h2>
+                            <p class="spx-section-subtitle">Account status and active balance overview.</p>
+                        </div>
+                    </div>
+
+                    <div class="spx-summary-cards-grid">
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">PPF Account Number</div>
+                            <div class="spx-scard-value" style="font-size: 1.1rem; letter-spacing: 1px;">#PPF-8849-XXXX-4012</div>
+                            <span style="font-size: 0.78rem; color: var(--spx-text-gray);">Opening Date: 12 April 2024</span>
+                        </div>
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Current Balance</div>
+                            <div class="spx-scard-value">₹125,400.00</div>
+                        </div>
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Total Contribution</div>
+                            <div class="spx-scard-value">₹110,000.00</div>
+                        </div>
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Interest Earned (7.1%)</div>
+                            <div class="spx-scard-value" style="color: #16a34a;">+₹15,400.00</div>
+                            <span style="font-size: 0.78rem; color: var(--spx-text-gray);">Maturity: 12 April 2039</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button class="spx-btn-card-primary" onclick="openDepositModal()">Deposit Funds</button>
+                        <button class="spx-btn-card-secondary" onclick="showToast('Statement generated for FY 2025-26', 'success')">View Statement</button>
+                        <button class="spx-btn-card-secondary" onclick="showToast('Nominee details updated.', 'info')">Manage Nominee</button>
+                    </div>
+                </section>
+
+                <!-- PPF HIGHLIGHTS -->
+                <section class="spx-section-block" style="margin-bottom: 40px;">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">PPF Highlights</h2>
+                            <p class="spx-section-subtitle">Key rules and government guidelines for PPF accounts.</p>
+                        </div>
+                    </div>
+
+                    <div class="spx-summary-cards-grid">
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Lock-in Period</div>
+                            <div class="spx-scard-value">15 Years</div>
+                            <span style="font-size: 0.8rem; color: var(--spx-text-gray);">Extendable in blocks of 5 yrs</span>
+                        </div>
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Minimum Annual Deposit</div>
+                            <div class="spx-scard-value">₹500</div>
+                            <span style="font-size: 0.8rem; color: var(--spx-text-gray);">To keep account active</span>
+                        </div>
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Maximum Annual Deposit</div>
+                            <div class="spx-scard-value">₹1,50,000</div>
+                            <span style="font-size: 0.8rem; color: var(--spx-text-gray);">Per financial year</span>
+                        </div>
+                        <div class="spx-summary-card">
+                            <div class="spx-scard-label">Tax Benefit Category</div>
+                            <div class="spx-scard-value">EEE Status</div>
+                            <span style="font-size: 0.8rem; color: #16a34a; font-weight: 600;">Exempt-Exempt-Exempt</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- HOW PPF WORKS TIMELINE -->
+                <section class="spx-portfolio-section" style="margin-bottom: 40px;">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">How PPF Works</h2>
+                            <p class="spx-section-subtitle">Step-by-step lifecycle of your Public Provident Fund.</p>
+                        </div>
+                    </div>
+
+                    <div class="spx-stepper" style="margin-bottom: 0;">
+                        <div class="spx-step-item completed">
+                            <div class="spx-step-num">1</div>
+                            <span class="spx-step-lbl">Account Opening</span>
+                        </div>
+                        <div class="spx-step-item completed">
+                            <div class="spx-step-num">2</div>
+                            <span class="spx-step-lbl">Annual Contributions</span>
+                        </div>
+                        <div class="spx-step-item active">
+                            <div class="spx-step-num">3</div>
+                            <span class="spx-step-lbl">Interest Accumulation</span>
+                        </div>
+                        <div class="spx-step-item">
+                            <div class="spx-step-num">4</div>
+                            <span class="spx-step-lbl">Partial Withdrawal (Yr 7)</span>
+                        </div>
+                        <div class="spx-step-item">
+                            <div class="spx-step-num">5</div>
+                            <span class="spx-step-lbl">Maturity (Yr 15)</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PPF CALCULATOR -->
+                <section class="spx-calculator-card">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">PPF Maturity Calculator</h2>
+                            <p class="spx-section-subtitle">Estimate growth over 15 to 30 years at 7.1% interest p.a.</p>
+                        </div>
+                    </div>
+
+                    <div class="spx-calc-grid">
+                        <div>
+                            <div class="spx-calc-input-group">
+                                <div class="spx-calc-label"><span>Annual Investment (₹)</span><strong id="ppfAnnualVal">₹150,000</strong></div>
+                                <input type="range" id="ppfAnnual" class="spx-range-slider" min="500" max="150000" step="500" value="150000">
+                            </div>
+
+                            <div class="spx-calc-input-group">
+                                <div class="spx-calc-label"><span>Investment Duration</span><strong id="ppfDurationVal">15 Yrs</strong></div>
+                                <input type="range" id="ppfDuration" class="spx-range-slider" min="15" max="30" step="5" value="15">
+                            </div>
+                        </div>
+
+                        <div class="spx-calc-result-box">
+                            <div class="spx-calc-res-item"><span>Total Investment</span><strong id="ppfInvested">₹2,250,000</strong></div>
+                            <div class="spx-calc-res-item"><span>Estimated Interest (7.1%)</span><strong id="ppfInterest" style="color:#16a34a;">₹1,818,209</strong></div>
+                            <div class="spx-calc-res-item spx-calc-res-total">
+                                <span>Maturity Value</span>
+                                <span id="ppfMaturity" class="val">₹4,068,209</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- OPEN PPF ACCOUNT MULTI-STEP FORM -->
+                <section id="open-ppf" class="spx-portfolio-section">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">Open PPF Account</h2>
+                            <p class="spx-section-subtitle">Instant online digital PPF account registration.</p>
+                        </div>
+                    </div>
+
+                    <div class="spx-stepper">
+                        <div id="step-indicator-1" class="spx-step-item active"><div class="spx-step-num">1</div><span class="spx-step-lbl">Customer</span></div>
+                        <div id="step-indicator-2" class="spx-step-item"><div class="spx-step-num">2</div><span class="spx-step-lbl">KYC</span></div>
+                        <div id="step-indicator-3" class="spx-step-item"><div class="spx-step-num">3</div><span class="spx-step-lbl">Nominee</span></div>
+                        <div id="step-indicator-4" class="spx-step-item"><div class="spx-step-num">4</div><span class="spx-step-lbl">Branch</span></div>
+                        <div id="step-indicator-5" class="spx-step-item"><div class="spx-step-num">5</div><span class="spx-step-lbl">Review</span></div>
+                        <div id="step-indicator-6" class="spx-step-item"><div class="spx-step-num">6</div><span class="spx-step-lbl">Confirm</span></div>
+                    </div>
+
+                    <div style="background: #faf8fd; padding: 26px; border-radius: 16px; border: 1px solid #ede5f4;">
+
+                        <!-- STEP 1 -->
+                        <div id="wizard-step-1">
+                            <h3 style="font-size: 1.1rem; color: #2d103f; margin-bottom: 16px;">Step 1: Customer Details</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div class="spx-form-group"><label class="spx-form-label">Full Name</label><input type="text" class="spx-form-input" value="John Doe" required></div>
+                                <div class="spx-form-group"><label class="spx-form-label">Mobile Number</label><input type="text" class="spx-form-input" data-type="mobile" value="9876543210" required></div>
+                            </div>
+                            <button class="spx-btn-primary" onclick="goToStep(2)">Next: KYC Details &rarr;</button>
+                        </div>
+
+                        <!-- STEP 2 -->
+                        <div id="wizard-step-2" style="display: none;">
+                            <h3 style="font-size: 1.1rem; color: #2d103f; margin-bottom: 16px;">Step 2: PAN & Aadhaar</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div class="spx-form-group"><label class="spx-form-label">PAN Card</label><input type="text" class="spx-form-input" data-type="pan" value="ABCDE1234F" required></div>
+                                <div class="spx-form-group"><label class="spx-form-label">Aadhaar Number</label><input type="text" class="spx-form-input" data-type="aadhaar" value="9876 5432 1098" required></div>
+                            </div>
+                            <div style="display: flex; gap: 12px;"><button class="spx-btn-secondary" onclick="goToStep(1)">&larr; Back</button><button class="spx-btn-primary" onclick="goToStep(3)">Next: Nominee &rarr;</button></div>
+                        </div>
+
+                        <!-- STEP 3 -->
+                        <div id="wizard-step-3" style="display: none;">
+                            <h3 style="font-size: 1.1rem; color: #2d103f; margin-bottom: 16px;">Step 3: Nominee Details</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div class="spx-form-group"><label class="spx-form-label">Nominee Name</label><input type="text" class="spx-form-input" value="Jane Doe" required></div>
+                                <div class="spx-form-group"><label class="spx-form-label">Relationship</label><input type="text" class="spx-form-input" value="Spouse" required></div>
+                            </div>
+                            <div style="display: flex; gap: 12px;"><button class="spx-btn-secondary" onclick="goToStep(2)">&larr; Back</button><button class="spx-btn-primary" onclick="goToStep(4)">Next: Branch &rarr;</button></div>
+                        </div>
+
+                        <!-- STEP 4 -->
+                        <div id="wizard-step-4" style="display: none;">
+                            <h3 style="font-size: 1.1rem; color: #2d103f; margin-bottom: 16px;">Step 4: Branch Selection</h3>
+                            <div class="spx-form-group">
+                                <label class="spx-form-label">Home Branch</label>
+                                <select class="spx-form-input">
+                                    <option value="Main">SPX Central Main Branch - Mumbai</option>
+                                    <option value="Connaught">SPX Connaught Place - New Delhi</option>
+                                    <option value="MG">SPX MG Road - Bengaluru</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 12px;"><button class="spx-btn-secondary" onclick="goToStep(3)">&larr; Back</button><button class="spx-btn-primary" onclick="goToStep(5)">Next: Review &rarr;</button></div>
+                        </div>
+
+                        <!-- STEP 5 -->
+                        <div id="wizard-step-5" style="display: none;">
+                            <h3 style="font-size: 1.1rem; color: #2d103f; margin-bottom: 16px;">Step 5: Review Application</h3>
+                            <div style="background: #ffffff; padding: 16px; border-radius: 10px; margin-bottom: 16px; font-size: 0.88rem;">
+                                <div>Name: John Doe</div>
+                                <div>PAN: ABCDE1234F</div>
+                                <div>Branch: SPX Central Main Branch</div>
+                            </div>
+                            <div style="display: flex; gap: 12px;"><button class="spx-btn-secondary" onclick="goToStep(4)">&larr; Back</button><button class="spx-btn-primary" onclick="goToStep(6)">Proceed to Confirm &rarr;</button></div>
+                        </div>
+
+                        <!-- STEP 6 -->
+                        <div id="wizard-step-6" style="display: none;">
+                            <h3 style="font-size: 1.1rem; color: #2d103f; margin-bottom: 16px;">Step 6: Confirmation</h3>
+                            <p style="font-size: 0.9rem; color: var(--spx-text-gray); margin-bottom: 20px;">Ready to create your government-backed PPF account with initial deposit of ₹500.</p>
+                            <div style="display: flex; gap: 12px;"><button class="spx-btn-secondary" onclick="goToStep(5)">&larr; Back</button><button class="spx-btn-primary" onclick="confirmPpfOpening()">Confirm & Open PPF Account</button></div>
+                        </div>
+
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <footer class="spx-portal-footer">
+            <div class="spx-footer-container"><div class="spx-footer-copy">&copy; 2026 SPX BANK. All rights reserved.</div></div>
+        </footer>
+
+    </div>
+
+    <!-- DEPOSIT MODAL -->
+    <div id="ppfDepositModal" class="spx-modal-backdrop">
+        <div class="spx-modal-card">
+            <button class="spx-modal-close" onclick="closeAllModals()">&times;</button>
+            <h3 style="color: #2d103f; font-size: 1.2rem; margin-bottom: 16px;">Deposit to PPF Account</h3>
+            <div class="spx-form-group">
+                <label class="spx-form-label">Deposit Amount (₹500 - ₹1,50,000)</label>
+                <input type="number" id="ppfDepAmt" class="spx-form-input" min="500" max="150000" value="5000">
+            </div>
+            <button class="spx-btn-primary" style="width: 100%; justify-content: center;" onclick="executePpfDeposit()">Confirm Deposit</button>
+        </div>
+    </div>
+
+    <!-- SECURITY CONFIRM MODAL -->
+    <div id="securityConfirmModal" class="spx-modal-backdrop">
+        <div class="spx-modal-card">
+            <button class="spx-modal-close" onclick="closeAllModals()">&times;</button>
+            <h3 id="securityModalTitle" style="color: #2d103f; font-size: 1.25rem; margin-bottom: 12px;">Security Verification</h3>
+            <div id="securityModalDetails" style="background: #faf8fd; padding: 14px; border-radius: 10px; margin-bottom: 18px; font-size: 0.88rem; color: #444;"></div>
+            <div class="spx-form-group">
+                <label class="spx-form-label">Enter 4-Digit Net-Banking MPIN / OTP</label>
+                <input type="password" id="securityMpinInput" class="spx-form-input" maxlength="4" placeholder="••••">
+            </div>
+            <button class="spx-btn-primary" style="width: 100%; justify-content: center;" onclick="executeSecurityConfirm()">Authorize Action</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/investments.js') }}"></script>
+    <script>
+        function openDepositModal() {
+            openModal('ppfDepositModal');
+        }
+
+        function executePpfDeposit() {
+            const amt = document.getElementById('ppfDepAmt').value;
+            if (!amt || amt < 500) {
+                showToast('Minimum deposit is ₹500', 'error');
+                return;
+            }
+            closeAllModals();
+            promptSecurityConfirmation('Authorize PPF Deposit', `
+                <strong>Deposit Summary:</strong><br>
+                PPF Account: #PPF-8849-XXXX-4012<br>
+                Amount: <strong>₹${parseFloat(amt).toLocaleString()}</strong><br>
+                Debit Source: SPX Premier Checking Account
+            `, () => {
+                showToast(`PPF Deposit of ₹${parseFloat(amt).toLocaleString()} completed!`, 'success');
+            });
+        }
+
+        function confirmPpfOpening() {
+            promptSecurityConfirmation('Authorize PPF Account Creation', `
+                <strong>PPF Registration Summary:</strong><br>
+                Name: John Doe<br>
+                PAN: ABCDE1234F<br>
+                Initial Deposit: ₹500.00
+            `, () => {
+                showToast('PPF Account #PPF-8849-9021-1104 opened successfully!', 'success');
+            });
+        }
+    </script>
+</body>
+</html>

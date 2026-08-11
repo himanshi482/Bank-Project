@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPX BANK - IPO Portal</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/favicon/favicon.png') }}">
+    <meta name="description" content="SPX BANK IPO Portal — Apply for public offerings with seamless ASBA blocking.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="portal-wrapper">
+
+        <div class="spx-top-nav">
+            <div class="spx-top-nav-container">
+                <div class="spx-top-nav-left"><span class="spx-top-tab">Banking</span></div>
+                <div class="spx-top-nav-right">
+                    <a href="tel:1800111101" class="spx-top-link spx-icon-link">1800-11-1101</a>
+                    <button class="spx-logout-btn" onclick="window.location.href='/logout'">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <header class="spx-main-header">
+            <div class="spx-header-container">
+                <div class="spx-logo-block" onclick="window.location.href='/'">
+                    <span class="spx-text">SPX BANK</span>
+                    <span class="net-banking-tag">NET-BANKING</span>
+                </div>
+                <nav class="spx-main-nav">
+                    <div class="spx-nav-menu logged-in-menu">
+                        <a href="/home/landingPage/homePage" class="spx-nav-item">Overview</a>
+                        <a href="/home/landingPage/manageRelationship/transactionAccounts" class="spx-nav-item">Accounts</a>
+                        <a id="nav-investments-tab" class="spx-nav-item active" href="/investments">Investments</a>
+                    </div>
+                </nav>
+                {% include 'components/investments_mega_menu.html' %}
+                <div class="spx-header-actions">
+                    <div class="spx-user-badge"><span class="spx-avatar-initials">JD</span></div>
+                </div>
+            </div>
+        </header>
+
+        <main class="spx-portal-body">
+            <div class="spx-investments-container">
+
+                <nav class="spx-breadcrumb-nav">
+                    <a href="/home/landingPage/homePage">Home</a>
+                    <span class="separator">&gt;</span>
+                    <a href="/investments">Investments</a>
+                    <span class="separator">&gt;</span>
+                    <span class="current">IPO Hub</span>
+                </nav>
+
+                <!-- HERO SECTION -->
+                <section class="spx-inv-hero">
+                    <div class="spx-inv-hero-content">
+                        <h1>Invest in IPOs</h1>
+                        <p>Discover upcoming public offerings, submit ASBA bids instantly using your SPX bank account or UPI, and track allotment status in real-time.</p>
+                        <div class="spx-hero-actions">
+                            <a href="#ipo-listings" class="spx-btn-primary">View Open IPOs</a>
+                            <a href="#my-applications" class="spx-btn-secondary">My Applications</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- IPO TABS & LISTINGS -->
+                <section id="ipo-listings" class="spx-section-block" style="margin-bottom: 40px;">
+                    <div class="spx-filter-tabs">
+                        <button class="spx-tab-item active" onclick="switchIpoTab('open', this)">Open IPOs</button>
+                        <button class="spx-tab-item" onclick="switchIpoTab('upcoming', this)">Upcoming</button>
+                        <button class="spx-tab-item" onclick="switchIpoTab('closed', this)">Closed</button>
+                        <button class="spx-tab-item" onclick="switchIpoTab('applications', this)">My Applications</button>
+                    </div>
+
+                    <!-- OPEN IPOS LIST -->
+                    <div id="ipo-tab-open" class="spx-fund-cards-grid">
+                        <div class="spx-fund-card">
+                            <div class="spx-fund-head">
+                                <div>
+                                    <h3 class="spx-fund-name">TechVista Solutions Ltd</h3>
+                                    <span class="spx-fund-cat">Symbol: TECHVISTA • IT Services</span>
+                                </div>
+                                <span class="spx-badge completed">14.8x Subscribed</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85rem; background: #faf8fd; padding: 12px; border-radius: 10px;">
+                                <div>Price Band: <strong>₹420 - ₹445</strong></div>
+                                <div>Lot Size: <strong>33 Shares</strong></div>
+                                <div>Min Investment: <strong>₹14,685</strong></div>
+                                <div>Issue Size: <strong>₹1,450 Cr</strong></div>
+                                <div>Open Date: <strong>12 Aug 2026</strong></div>
+                                <div>Close Date: <strong>14 Aug 2026</strong></div>
+                            </div>
+                            <div class="spx-product-actions">
+                                <a href="/investments/ipo/1" class="spx-btn-card-secondary">View IPO Details</a>
+                                <a href="/investments/ipo/1" class="spx-btn-card-primary">Apply Now</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- UPCOMING IPOS LIST -->
+                    <div id="ipo-tab-upcoming" class="spx-fund-cards-grid" style="display: none;">
+                        <div class="spx-fund-card">
+                            <div class="spx-fund-head">
+                                <div>
+                                    <h3 class="spx-fund-name">GreenEnergy Renewables India</h3>
+                                    <span class="spx-fund-cat">Symbol: GREENNRG • Clean Energy</span>
+                                </div>
+                                <span class="spx-badge pending">Upcoming</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85rem; background: #faf8fd; padding: 12px; border-radius: 10px;">
+                                <div>Price Band: <strong>₹185 - ₹195</strong></div>
+                                <div>Lot Size: <strong>75 Shares</strong></div>
+                                <div>Min Investment: <strong>₹14,625</strong></div>
+                                <div>Issue Size: <strong>₹2,800 Cr</strong></div>
+                                <div>Open Date: <strong>15 Aug 2026</strong></div>
+                                <div>Close Date: <strong>18 Aug 2026</strong></div>
+                            </div>
+                            <div class="spx-product-actions">
+                                <a href="/investments/ipo/2" class="spx-btn-card-secondary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CLOSED IPOS LIST -->
+                    <div id="ipo-tab-closed" class="spx-fund-cards-grid" style="display: none;">
+                        <div class="spx-fund-card">
+                            <div class="spx-fund-head">
+                                <div>
+                                    <h3 class="spx-fund-name">Apex BioPharm Health</h3>
+                                    <span class="spx-fund-cat">Symbol: APEXBIO • Healthcare</span>
+                                </div>
+                                <span class="spx-badge failed">Closed (28.6x)</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85rem; background: #faf8fd; padding: 12px; border-radius: 10px;">
+                                <div>Price Band: <strong>₹680 - ₹715</strong></div>
+                                <div>Listing Date: <strong>10 Aug 2026</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MY APPLICATIONS SECTION -->
+                <section id="my-applications" class="spx-section-block">
+                    <div class="spx-section-head">
+                        <div>
+                            <h2 class="spx-section-title-main">My IPO Applications</h2>
+                            <p class="spx-section-subtitle">Track active bids and allotment status.</p>
+                        </div>
+                    </div>
+
+                    <div class="spx-table-container">
+                        <table class="spx-table">
+                            <thead>
+                                <tr>
+                                    <th>Company</th>
+                                    <th>Application Date</th>
+                                    <th>Bid Amount</th>
+                                    <th>Lots</th>
+                                    <th>Status</th>
+                                    <th>Refund Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>TechVista Solutions Ltd</strong></td>
+                                    <td>12 Aug 2026</td>
+                                    <td>₹14,685.00</td>
+                                    <td>1 Lot (33 Qty)</td>
+                                    <td><span class="spx-badge applied">Applied</span></td>
+                                    <td>N/A (Amount Blocked)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Apex BioPharm Health</strong></td>
+                                    <td>02 Aug 2026</td>
+                                    <td>₹14,300.00</td>
+                                    <td>1 Lot (20 Qty)</td>
+                                    <td><span class="spx-badge refunded">Not Allotted</span></td>
+                                    <td><span class="spx-badge completed">Refunded / Unblocked</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <footer class="spx-portal-footer">
+            <div class="spx-footer-container"><div class="spx-footer-copy">&copy; 2026 SPX BANK. All rights reserved.</div></div>
+        </footer>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/investments.js') }}"></script>
+    <script>
+        function switchIpoTab(tab, btn) {
+            document.querySelectorAll('.spx-tab-item').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+            ['open', 'upcoming', 'closed'].forEach(t => {
+                const el = document.getElementById('ipo-tab-' + t);
+                if (el) el.style.display = (t === tab) ? 'grid' : 'none';
+            });
+
+            if (tab === 'applications') {
+                document.getElementById('my-applications').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Auto tab select if query param exists
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('tab') === 'my-applications') {
+            switchIpoTab('applications');
+        }
+    </script>
+</body>
+</html>

@@ -26,14 +26,30 @@ DB_CONFIG = {
     'database': os.environ.get('DB_NAME', 'spxbank')
 }
 
-db_pool = mysql.connector.pooling.MySQLConnectionPool(
-    pool_name="spxbank_pool",
-    pool_size=5,
-    pool_reset_session=True,
-    **DB_CONFIG
-)
+db_pool = None
+
+def init_db_pool():
+    global db_pool
+    if db_pool is None:
+        try:
+            db_pool = mysql.connector.pooling.MySQLConnectionPool(
+                pool_name="spxbank_pool",
+                pool_size=5,
+                pool_reset_session=True,
+                **DB_CONFIG
+            )
+            print("[DB INIT] Connection pool created successfully.")
+        except mysql.connector.Error as e:
+            print(f"[DB INIT ERROR] Could not initialize DB pool: {e}")
+            db_pool = None
+            raise
+    return db_pool
 
 def get_db_connection():
+    if db_pool is None:
+        init_db_pool()
+    if db_pool is None:
+        raise RuntimeError("Database connection pool is not initialized.")
     return db_pool.get_connection()
 
 def run_migrations():
@@ -43,6 +59,7 @@ def run_migrations():
         "ALTER TABLE otps ADD COLUMN action VARCHAR(50) NOT NULL DEFAULT 'LOGIN'",
     ]
     try:
+        init_db_pool()
         conn = get_db_connection()
         cursor = conn.cursor()
         for sql in migrations:
@@ -58,8 +75,10 @@ def run_migrations():
                     print(f"[MIGRATION WARN] {e}")
         cursor.close()
         conn.close()
-    except Exception as e:
+    except mysql.connector.Error as e:
         print(f"[MIGRATION ERROR] Could not connect for migrations: {e}")
+    except Exception as e:
+        print(f"[MIGRATION ERROR] {e}")
 
 run_migrations()
 
@@ -133,10 +152,10 @@ def get_email_template(action, first_name, otp):
 
 def send_real_email(to_email, subject, html_body, plain_text):
     try:
-        smtp_server = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
+        smtp_server = os.environ.get('SMTP_SERVER', 'smtp.gmail.com').strip()
         smtp_port = int(os.environ.get('SMTP_PORT', 465))
-        smtp_user = os.environ.get('SMTP_USER')
-        smtp_pass = os.environ.get('SMTP_PASS')
+        smtp_user = os.environ.get('SMTP_USER', '').strip()
+        smtp_pass = os.environ.get('SMTP_PASS', '').strip()
 
         if not smtp_user or not smtp_pass:
             print("WARNING: SMTP credentials not set. Simulated email:")
@@ -189,6 +208,10 @@ def logout_redirect():
 @app.route('/home/landingPage/manageRelationship/transactionAccounts')
 def accounts():
     return render_template('accounts.html')
+
+@app.route('/home/landingPage/manageRelationship/investments')
+def investments():
+    return render_template('investment.html')
 # -------------------
 
 @app.route('/api/register', methods=['POST'])
@@ -365,7 +388,9 @@ def send_otp():
         if 'conn' in locals(): conn.close()
 
     subject, html_body, plain_text = get_email_template(action, first_name, otp)
-    send_real_email(email, subject, html_body, plain_text)
+    email_sent = send_real_email(email, subject, html_body, plain_text)
+    if not email_sent:
+        return jsonify({'success': False, 'message': 'Failed to send OTP email. Please check SMTP settings.'}), 500
 
     return jsonify({'success': True, 'message': 'OTP sent'})
 
@@ -485,5 +510,217 @@ def reset_password():
         if 'conn' in locals() and conn:
             conn.close()
 
+# ==========================================================================
+# SPX BANK INVESTMENT PORTAL MODULE VIEW ROUTES & API ENDPOINTS
+# ==========================================================================
+
+@app.route('/investments')
+@app.route('/home/landingPage/manageRelationship/investments')
+def investments_main():
+    return render_template('investments/main.html')
+
+@app.route('/investments/mutual-funds')
+def investments_mutual_funds():
+    return render_template('investments/mutual_funds.html')
+
+@app.route('/investments/mutual-funds/<int:fund_id>')
+def investments_mutual_fund_detail(fund_id):
+    return render_template('investments/mutual_fund_detail.html', fund_id=fund_id)
+
+@app.route('/investments/nps')
+def investments_nps():
+    return render_template('investments/nps.html')
+
+@app.route('/investments/ppf')
+def investments_ppf():
+    return render_template('investments/ppf.html')
+
+@app.route('/investments/ipo')
+def investments_ipo():
+    return render_template('investments/ipo.html')
+
+@app.route('/investments/ipo/<int:ipo_id>')
+def investments_ipo_detail(ipo_id):
+    return render_template('investments/ipo_detail.html', ipo_id=ipo_id)
+
+@app.route('/investments/demat')
+def investments_demat():
+    return render_template('investments/demat.html')
+
+@app.route('/investments/securities/<int:security_id>')
+def investments_security_detail(security_id):
+    return render_template('investments/security_detail.html', security_id=security_id)
+
+@app.route('/investments/transactions')
+def investments_transactions():
+    return render_template('investments/transactions.html')
+
+@app.route('/investments/goals')
+def investments_goals():
+    return render_template('investments/goals.html')
+
+# --- INVESTMENT API ENDPOINTS ---
+@app.route('/api/investments', methods=['GET'])
+def api_investments_overview():
+    return jsonify({
+        'success': True,
+        'summary': {
+            'total_investment': 25000.00,
+            'current_value': 27850.00,
+            'total_returns': 2850.00,
+            'returns_percent': 11.40,
+            'today_change': 320.00,
+            'today_change_percent': 1.16
+        }
+    })
+
+@app.route('/api/mutual-funds', methods=['GET'])
+def api_mutual_funds():
+    funds = [
+        {'id': 1, 'name': 'SPX Large Cap Flexi Equity Fund', 'category': 'Equity', 'risk_level': 'Very High', 'return_1y': 22.4, 'return_3y': 18.2, 'return_5y': 16.5, 'min_investment': 500, 'aum': '14,250 Cr', 'nav': 142.85, 'rating': 5, 'expense_ratio': 0.85},
+        {'id': 2, 'name': 'SPX Focused Bluechip Fund', 'category': 'Equity', 'risk_level': 'Very High', 'return_1y': 19.8, 'return_3y': 16.9, 'return_5y': 15.2, 'min_investment': 1000, 'aum': '22,100 Cr', 'nav': 88.40, 'rating': 5, 'expense_ratio': 0.92},
+        {'id': 3, 'name': 'SPX Dynamic Debt Scheme', 'category': 'Debt', 'risk_level': 'Low', 'return_1y': 7.6, 'return_3y': 7.2, 'return_5y': 7.0, 'min_investment': 500, 'aum': '8,900 Cr', 'nav': 34.20, 'rating': 4, 'expense_ratio': 0.35},
+        {'id': 4, 'name': 'SPX Balanced Advantage Fund', 'category': 'Hybrid', 'risk_level': 'Moderate', 'return_1y': 14.5, 'return_3y': 13.8, 'return_5y': 12.9, 'min_investment': 500, 'aum': '11,400 Cr', 'nav': 62.10, 'rating': 4, 'expense_ratio': 0.75}
+    ]
+    return jsonify({'success': True, 'mutual_funds': funds})
+
+@app.route('/api/mutual-funds/<int:fund_id>', methods=['GET'])
+def api_mutual_fund_detail(fund_id):
+    fund = {
+        'id': fund_id,
+        'name': 'SPX Large Cap Flexi Equity Fund' if fund_id == 1 else 'SPX Focused Bluechip Fund',
+        'category': 'Equity Direct Growth',
+        'risk_level': 'Very High',
+        'nav': 142.85,
+        'aum': '₹14,250 Cr',
+        'expense_ratio': 0.85,
+        'min_investment': 500
+    }
+    return jsonify({'success': True, 'fund': fund})
+
+@app.route('/api/mutual-funds/invest', methods=['POST'])
+def api_mutual_funds_invest():
+    return jsonify({'success': True, 'message': 'Lump-sum investment processed successfully', 'reference_id': 'MF' + str(random.randint(100000, 999999))})
+
+@app.route('/api/mutual-funds/sip', methods=['POST'])
+def api_mutual_funds_sip():
+    return jsonify({'success': True, 'message': 'SIP registered successfully', 'reference_id': 'SIP' + str(random.randint(100000, 999999))})
+
+@app.route('/api/nps', methods=['GET'])
+def api_nps_get():
+    return jsonify({
+        'success': True,
+        'nps': {
+            'pran': '1100-XXXX-8921',
+            'current_value': 45200.00,
+            'total_contribution': 38000.00,
+            'current_returns': 7200.00,
+            'pension_fund': 'SPX Pension Fund Managers Ltd'
+        }
+    })
+
+@app.route('/api/nps/open', methods=['POST'])
+def api_nps_open():
+    pran = '1100-' + str(random.randint(1000, 9999)) + '-' + str(random.randint(1000, 9999))
+    return jsonify({'success': True, 'message': 'NPS Account created successfully', 'pran': pran})
+
+@app.route('/api/ppf', methods=['GET'])
+def api_ppf_get():
+    return jsonify({
+        'success': True,
+        'ppf': {
+            'account_number': '#PPF-8849-XXXX-4012',
+            'opening_date': '2024-04-12',
+            'current_balance': 125400.00,
+            'total_contribution': 110000.00,
+            'interest_earned': 15400.00,
+            'maturity_date': '2039-04-12'
+        }
+    })
+
+@app.route('/api/ppf/open', methods=['POST'])
+def api_ppf_open():
+    acc_num = '#PPF-8849-' + str(random.randint(1000, 9999)) + '-' + str(random.randint(1000, 9999))
+    return jsonify({'success': True, 'message': 'PPF Account created successfully', 'account_number': acc_num})
+
+@app.route('/api/ppf/deposit', methods=['POST'])
+def api_ppf_deposit():
+    return jsonify({'success': True, 'message': 'PPF Deposit processed successfully', 'reference_id': 'PPF' + str(random.randint(100000, 999999))})
+
+@app.route('/api/ipos', methods=['GET'])
+def api_ipos_get():
+    ipos = [
+        {'id': 1, 'company_name': 'TechVista Solutions Ltd', 'symbol': 'TECHVISTA', 'issue_size': '₹1,450 Cr', 'price_band': '₹420 - ₹445', 'lot_size': 33, 'status': 'Open', 'subscription_status': '14.8x'},
+        {'id': 2, 'company_name': 'GreenEnergy Renewables India', 'symbol': 'GREENNRG', 'issue_size': '₹2,800 Cr', 'price_band': '₹185 - ₹195', 'lot_size': 75, 'status': 'Upcoming', 'subscription_status': '1.0x'}
+    ]
+    return jsonify({'success': True, 'ipos': ipos})
+
+@app.route('/api/ipos/<int:ipo_id>', methods=['GET'])
+def api_ipo_detail(ipo_id):
+    return jsonify({'success': True, 'ipo': {'id': ipo_id, 'company_name': 'TechVista Solutions Ltd', 'price_band': '₹420 - ₹445', 'lot_size': 33, 'cutoff_price': 445}})
+
+@app.route('/api/ipos/apply', methods=['POST'])
+def api_ipos_apply():
+    return jsonify({'success': True, 'message': 'IPO Application submitted & funds blocked successfully', 'application_id': 'ASBA' + str(random.randint(100000, 999999))})
+
+@app.route('/api/demat', methods=['GET'])
+def api_demat_get():
+    holdings = [
+        {'symbol': 'SPX', 'company_name': 'SPX CORP', 'quantity': 30, 'avg_price': 1150.00, 'current_price': 1245.50, 'invested_value': 34500.00, 'current_value': 37365.00, 'gain_loss': 2865.00, 'gain_percent': 8.30},
+        {'symbol': 'RELIANCE', 'company_name': 'RELIANCE IND', 'quantity': 15, 'avg_price': 2800.00, 'current_price': 2940.00, 'invested_value': 42000.00, 'current_value': 44100.00, 'gain_loss': 2100.00, 'gain_percent': 5.00},
+        {'symbol': 'INFY', 'company_name': 'INFOSYS LTD', 'quantity': 10, 'avg_price': 1600.00, 'current_price': 1780.40, 'invested_value': 16000.00, 'current_value': 17804.00, 'gain_loss': 1804.00, 'gain_percent': 11.28}
+    ]
+    return jsonify({
+        'success': True,
+        'demat': {
+            'demat_number': '#1204-XXXX-8819',
+            'holdings_count': 3,
+            'invested_value': 84500.00,
+            'current_value': 96820.00,
+            'overall_gain': 12320.00,
+            'holdings': holdings
+        }
+    })
+
+@app.route('/api/demat/open', methods=['POST'])
+def api_demat_open():
+    demat_num = '#1204-' + str(random.randint(1000, 9999)) + '-' + str(random.randint(1000, 9999))
+    return jsonify({'success': True, 'message': 'Demat Account created successfully', 'demat_number': demat_num})
+
+@app.route('/api/investments/portfolio', methods=['GET'])
+def api_investments_portfolio():
+    return jsonify({
+        'success': True,
+        'portfolio': {
+            'total_value': 27850.00,
+            'breakdown': {
+                'mutual_funds': 17420.00,
+                'ppf': 125400.00,
+                'nps': 45200.00,
+                'demat': 96820.00
+            }
+        }
+    })
+
+@app.route('/api/investments/transactions', methods=['GET'])
+def api_investments_transactions():
+    txs = [
+        {'date': '2026-08-10', 'product': 'Mutual Fund', 'type': 'SIP', 'amount': 5000.00, 'status': 'Completed', 'reference_id': 'TXN982140591'},
+        {'date': '2026-08-12', 'product': 'IPO', 'type': 'IPO Application', 'amount': 14685.00, 'status': 'Applied', 'reference_id': 'ASBA-77182901'},
+        {'date': '2026-07-15', 'product': 'PPF', 'type': 'Deposit', 'amount': 10000.00, 'status': 'Completed', 'reference_id': 'TXN441209841'}
+    ]
+    return jsonify({'success': True, 'transactions': txs})
+
+@app.route('/api/investments/goals', methods=['GET', 'POST'])
+def api_investments_goals():
+    if request.method == 'POST':
+        return jsonify({'success': True, 'message': 'Goal created successfully'})
+    goals = [
+        {'name': 'Dream Home Fund', 'category': 'Home', 'target_amount': 5000000, 'current_savings': 1250000, 'monthly_investment': 28500, 'progress': 25.0},
+        {'name': 'Child Higher Education', 'category': 'Education', 'target_amount': 2500000, 'current_savings': 680000, 'monthly_investment': 12000, 'progress': 27.2}
+    ]
+    return jsonify({'success': True, 'goals': goals})
+
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
+
