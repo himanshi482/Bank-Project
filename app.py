@@ -17,8 +17,10 @@ load_dotenv()
 app = Flask(__name__, static_folder='public', static_url_path='/public')
 app.secret_key = os.environ.get('SECRET_KEY', 'default-dev-key-change-in-prod')
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['SESSION_COOKIE_HTTPONLY'] = True
+ app.config['SESSION_COOKIE_HTTPONLY'] = True
 CORS(app, supports_credentials=True)
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+ 
 
 # Configure root logger to always write to stdout so terminal shows app logs
 logging.basicConfig(
@@ -31,6 +33,28 @@ app.logger.setLevel(logging.DEBUG)
 
 # Reduce noisy werkzeug access log to INFO while keeping app logs at DEBUG
 logging.getLogger('werkzeug').setLevel(logging.INFO)
+
+
+@app.before_request
+def log_incoming_request():
+    """Log each incoming HTTP request in a safe way (mask sensitive fields)."""
+    try:
+        preview = ''
+        if request.method in ('POST', 'PUT', 'PATCH'):
+            try:
+                payload = request.get_json(silent=True)
+            except Exception:
+                payload = None
+            if payload:
+                safe = dict(payload)
+                for secret in ('password', 'password_hash', 'smtp_pass', 'smtp_user'):
+                    if secret in safe:
+                        safe[secret] = '***'
+                preview = f" body={safe}"
+
+        app.logger.info(f"[REQUEST] {request.method} {request.path}{preview}")
+    except Exception as e:
+        app.logger.debug(f"Failed to log request: {e}")
 
 DB_CONFIG = {
     'host': os.environ.get('DB_HOST', 'localhost'),
