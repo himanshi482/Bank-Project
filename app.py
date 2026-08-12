@@ -9,6 +9,8 @@ from email.message import EmailMessage
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import uuid
+import logging
+import sys
 
 load_dotenv()
 
@@ -17,6 +19,18 @@ app.secret_key = os.environ.get('SECRET_KEY', 'default-dev-key-change-in-prod')
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 CORS(app, supports_credentials=True)
+
+# Configure root logger to always write to stdout so terminal shows app logs
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    handlers=[logging.StreamHandler(sys.stdout)],
+    force=True,
+)
+app.logger.setLevel(logging.DEBUG)
+
+# Reduce noisy werkzeug access log to INFO while keeping app logs at DEBUG
+logging.getLogger('werkzeug').setLevel(logging.INFO)
 
 DB_CONFIG = {
     'host': os.environ.get('DB_HOST', 'localhost'),
@@ -38,9 +52,9 @@ def init_db_pool():
                 pool_reset_session=True,
                 **DB_CONFIG
             )
-            print("[DB INIT] Connection pool created successfully.")
+            app.logger.info("[DB INIT] Connection pool created successfully.")
         except mysql.connector.Error as e:
-            print(f"[DB INIT ERROR] Could not initialize DB pool: {e}")
+            app.logger.exception(f"[DB INIT ERROR] Could not initialize DB pool: {e}")
             db_pool = None
             raise
     return db_pool
@@ -66,19 +80,19 @@ def run_migrations():
             try:
                 cursor.execute(sql)
                 conn.commit()
-                print(f"[MIGRATION OK] {sql[:60]}...")
+                app.logger.info(f"[MIGRATION OK] {sql[:60]}...")
             except Exception as e:
                 # 1060 = Duplicate column name — column already exists, safe to skip
                 if hasattr(e, 'errno') and e.errno == 1060:
-                    print(f"[MIGRATION SKIP] Column already exists — {sql[:60]}")
+                    app.logger.info(f"[MIGRATION SKIP] Column already exists — {sql[:60]}")
                 else:
-                    print(f"[MIGRATION WARN] {e}")
+                    app.logger.warning(f"[MIGRATION WARN] {e}")
         cursor.close()
         conn.close()
     except mysql.connector.Error as e:
-        print(f"[MIGRATION ERROR] Could not connect for migrations: {e}")
+        app.logger.exception(f"[MIGRATION ERROR] Could not connect for migrations: {e}")
     except Exception as e:
-        print(f"[MIGRATION ERROR] {e}")
+        app.logger.exception(f"[MIGRATION ERROR] {e}")
 
 run_migrations()
 
@@ -158,8 +172,8 @@ def send_real_email(to_email, subject, html_body, plain_text):
         smtp_pass = os.environ.get('SMTP_PASS', '').strip()
 
         if not smtp_user or not smtp_pass:
-            print("WARNING: SMTP credentials not set. Simulated email:")
-            print(f"To: {to_email}\nSubject: {subject}\nBody: HTML Content rendered")
+            app.logger.warning("SMTP credentials not set. Simulated email:")
+            app.logger.info(f"To: {to_email}\nSubject: {subject}\nBody: HTML Content rendered")
             return True
 
         msg = EmailMessage()
@@ -176,7 +190,7 @@ def send_real_email(to_email, subject, html_body, plain_text):
             server.send_message(msg)
         return True
     except Exception as e:
-        print(f"Email error: {e}")
+        app.logger.exception(f"Email error: {e}")
         return False
 
 # --- VIEW ROUTES ---
@@ -270,7 +284,7 @@ def register():
         return jsonify({'success': True, 'user': user_obj})
         
     except Exception as e:
-        print(f"DB Error: {e}")
+        app.logger.exception(f"DB Error: {e}")
         return jsonify({'success': False, 'message': 'Server error'}), 500
     finally:
         if 'cursor' in locals(): cursor.close()
@@ -296,14 +310,14 @@ def login():
         if user['lockout_until']:
             if user['lockout_until'] > now:
                 remaining = int((user['lockout_until'] - now).total_seconds())
-                print(f"[LOCKOUT BLOCKED] Login attempt rejected for locked user: {username}")
+                app.logger.warning(f"[LOCKOUT BLOCKED] Login attempt rejected for locked user: {username}")
                 return jsonify({'success': False, 'error': 'Account locked', 'lockout': True, 'remaining_seconds': remaining, 'message': f'Account locked. Please wait {remaining} seconds.'}), 423
             else:
                 cursor.execute("UPDATE users SET failed_attempts=0, lockout_until=NULL WHERE id=%s", (user['id'],))
                 conn.commit()
                 user['failed_attempts'] = 0
                 user['lockout_until'] = None
-                print(f"[LOCKOUT EXPIRED] Resetting failed attempts and lockout timestamp for user: {username}")
+                app.logger.info(f"[LOCKOUT EXPIRED] Resetting failed attempts and lockout timestamp for user: {username}")
 
         # Verify password
         if bcrypt.checkpw(password.encode('utf-8'), user['password_hash'].encode('utf-8')):
@@ -336,7 +350,7 @@ def login():
                 return jsonify({'success': False, 'lockout': False, 'attempts_remaining': remaining, 'message': msg}), 401
 
     except Exception as e:
-        print(f"DB Error: {e}")
+        app.logger.exception(f"DB Error: {e}")
         return jsonify({'success': False, 'message': 'Server error'}), 500
     finally:
         if 'cursor' in locals(): cursor.close()
@@ -381,7 +395,7 @@ def send_otp():
         cursor.execute("INSERT INTO otps (email, otp, action, expires_at) VALUES (%s, %s, %s, %s)", (email, otp, action, expires_at))
         conn.commit()
     except Exception as e:
-        print(f"[SEND-OTP ERROR] {e}")
+        app.logger.exception(f"[SEND-OTP ERROR] {e}")
         return jsonify({'success': False, 'message': 'Server error'}), 500
     finally:
         if 'cursor' in locals(): cursor.close()
@@ -422,14 +436,14 @@ def verify_otp():
                 from flask import session as flask_session
                 flask_session['verified_reset_email'] = email
                 flask_session['verified_reset_at'] = datetime.now().isoformat()
-                print(f"[RESET SESSION SET] verified_reset_email={email}")
+                app.logger.debug(f"[RESET SESSION SET] verified_reset_email={email}")
 
             return jsonify({'success': True})
         else:
             return jsonify({'success': False, 'message': 'Invalid OTP'})
             
     except Exception as e:
-        print(f"DB Error: {e}")
+        app.logger.exception(f"DB Error: {e}")
         return jsonify({'success': False, 'message': 'Server error'}), 500
     finally:
         if 'cursor' in locals(): cursor.close()
@@ -462,16 +476,16 @@ def reset_password():
             cursor_check.close()
             conn_check.close()
         except Exception as db_e:
-            print(f"[RESET AUTH CHECK ERROR] {db_e}")
+            app.logger.exception(f"[RESET AUTH CHECK ERROR] {db_e}")
             otp_fallback = None
 
         if not otp_fallback:
-            print(f"[RESET REJECTED] No valid session or verified OTP for {email}")
+            app.logger.warning(f"[RESET REJECTED] No valid session or verified OTP for {email}")
             return jsonify({'success': False, 'message': 'Session expired or unauthorized. Please restart the password reset flow.'}), 403
 
-        print(f"[RESET AUTH] DB-fallback OTP verification passed for {email}")
+        app.logger.info(f"[RESET AUTH] DB-fallback OTP verification passed for {email}")
     else:
-        print(f"[RESET AUTH] Session verification passed for {email}")
+        app.logger.info(f"[RESET AUTH] Session verification passed for {email}")
 
     try:
         conn = get_db_connection()
@@ -492,7 +506,7 @@ def reset_password():
         conn.commit()
 
         affected = cursor.rowcount
-        print(f"[RESET SUCCESS] Password updated for {email}, rows affected: {affected}")
+        app.logger.info(f"[RESET SUCCESS] Password updated for {email}, rows affected: {affected}")
         cursor.close()
 
         if affected == 0:
@@ -504,7 +518,7 @@ def reset_password():
 
         return jsonify({'success': True, 'message': 'Password reset successful'})
     except Exception as e:
-        print(f"[RESET ERROR] {e}")
+        app.logger.exception(f"[RESET ERROR] {e}")
         return jsonify({'success': False, 'message': 'Server error'}), 500
     finally:
         if 'conn' in locals() and conn:

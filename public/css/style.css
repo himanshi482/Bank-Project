@@ -1925,6 +1925,14 @@ body:has(#forgot-password-view:not(.hidden)) .spx-global-back-container {
     color: #5a2d82;
 }
 
+.spx-mega-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
 /* ===== Deposits Mega Menu ===== */
 .spx-deposits-mega-menu {
     position: absolute;

@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupOtpBoxNavigation();
     checkExistingSession();
     startPortalClock();
-    
+
     // Generate initial CAPTCHA challenges
     generateCaptcha('login');
     generateCaptcha('reg');
@@ -61,9 +61,9 @@ function generateCaptcha(type) {
     const canvas = document.getElementById(`${type}-captcha-canvas`);
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let code = '';
     for (let i = 0; i < 5; i++) {
@@ -125,27 +125,27 @@ function switchView(viewName) {
     if (viewHistory[viewHistory.length - 1] !== viewName) {
         viewHistory.push(viewName);
     }
-    
+
     // Purge Registration State on View Switching
     if (viewName === 'login' || viewName === 'register') {
         const loginForm = document.getElementById('login-form');
         if (loginForm) loginForm.reset();
-        
+
         const registerForm = document.getElementById('register-form');
         if (registerForm) registerForm.reset();
-        
+
         const regError = document.getElementById('reg-error-msg');
         if (regError) {
             regError.style.display = 'none';
             regError.textContent = '';
         }
-        
+
         const loginError = document.getElementById('login-error-msg');
         if (loginError) {
             loginError.style.display = 'none';
             loginError.textContent = '';
         }
-        
+
         // Clear password strength indicator
         if (typeof checkPasswordStrength === 'function') {
             checkPasswordStrength('');
@@ -198,7 +198,7 @@ function togglePasswordVisibility(inputId, btnEl) {
     const input = document.getElementById(inputId);
     const eyeOpen = btnEl.querySelector('.eye-open');
     const eyeClosed = btnEl.querySelector('.eye-closed');
-    
+
     if (input.type === 'password') {
         input.type = 'text';
         eyeOpen.classList.add('hidden');
@@ -267,11 +267,11 @@ async function handleLoginSubmit(e) {
 
     const btn = document.getElementById('btn-login');
     const errorMsgDiv = document.getElementById('login-error-msg');
-    
+
     // Clear previous errors
     errorMsgDiv.style.display = 'none';
     errorMsgDiv.textContent = '';
-    
+
     setButtonLoading(btn, true);
 
     try {
@@ -281,7 +281,7 @@ async function handleLoginSubmit(e) {
             body: JSON.stringify({ username, password })
         });
         const data = await response.json();
-        
+
         setButtonLoading(btn, false);
 
         if (!data.success) {
@@ -380,7 +380,7 @@ async function handleRegisterSubmit(e) {
 
     const btn = document.getElementById('btn-register');
     const errorMsgDiv = document.getElementById('reg-error-msg');
-    
+
     // Clear previous errors
     if (errorMsgDiv) {
         errorMsgDiv.style.display = 'none';
@@ -446,7 +446,7 @@ async function handleNewPasswordSubmit(e) {
             credentials: 'include',
             body: JSON.stringify({ email: email, password: newPassword })
         });
-        
+
         const data = await response.json();
         setButtonLoading(btn, false);
 
@@ -480,18 +480,18 @@ async function handleNewPasswordSubmit(e) {
         document.getElementById('confirm-new-password').value = '';
         document.getElementById('reset-email').value = '';
         document.getElementById('reset-verified-email').textContent = '';
-        
+
         const resetForm2 = document.getElementById('forgot-password-form-2');
         if (resetForm2) resetForm2.reset();
-        
+
         showToast('Password updated successfully! Please login.', 'success');
         switchView('login');
-        
+
         document.getElementById('login-username').value = '';
         document.getElementById('login-password').value = '';
         const loginForm = document.getElementById('login-form');
         if (loginForm) loginForm.reset();
-        
+
     } catch (err) {
         console.error('Password reset error:', err);
         setButtonLoading(btn, false);
@@ -506,7 +506,7 @@ async function handleNewPasswordSubmit(e) {
 async function triggerOtpFlow(action, email, payload) {
     pendingOtpAction = action;
     pendingPayload = payload;
-    
+
     document.getElementById('otp-target-display').textContent = email;
 
     const boxes = document.querySelectorAll('.otp-box');
@@ -526,7 +526,7 @@ async function sendRealOtpEmail(targetEmail, action) {
         if (action === 'REGISTER' && typeof pendingPayload !== 'undefined' && pendingPayload && pendingPayload.username) {
             bodyData.username = pendingPayload.username;
         }
-        
+
         const response = await fetch('http://localhost:5000/api/send-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -590,7 +590,7 @@ function setupOtpBoxNavigation() {
             if (val.length === 1 && idx < boxes.length - 1) {
                 boxes[idx + 1].focus();
             }
-            
+
             let fullCode = '';
             boxes.forEach(b => fullCode += b.value);
             if (fullCode.length === 6) {
@@ -629,7 +629,7 @@ async function submitOtpVerification() {
 
     const btn = document.getElementById('btn-verify-otp');
     setButtonLoading(btn, true);
-    
+
     const targetEmail = document.getElementById('otp-target-display').textContent;
 
     try {
@@ -640,7 +640,7 @@ async function submitOtpVerification() {
             body: JSON.stringify({ email: targetEmail, otp: enteredCode, action: pendingOtpAction })
         });
         const data = await response.json();
-        
+
         setButtonLoading(btn, false);
 
         if (!data.success) {
@@ -660,7 +660,7 @@ async function submitOtpVerification() {
                     body: JSON.stringify(pendingPayload)
                 });
                 const regData = await regResponse.json();
-                
+
                 if (regData.success) {
                     showToast('Registration successful! Please log in.', 'success');
                     const regForm = document.getElementById('register-form');
@@ -706,14 +706,14 @@ async function submitOtpVerification() {
 function completeLogin(user) {
     currentUser = user;
     sessionStorage.setItem('bank_active_session', JSON.stringify(user));
-    
+
     document.getElementById('dash-user-name').textContent = user.name;
     document.getElementById('dash-acc-num').textContent = `ACC: ${user.accountNumber}`;
     document.getElementById('dash-acc-type').textContent = user.accountType || 'Premier Vault Account';
     document.getElementById('dash-balance').textContent = user.balance || '148,920.50';
-    
+
     const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-    document.getElementById('dash-avatar').textContent = initials || 'JD';
+    document.querySelectorAll('.spx-avatar-initials').forEach(el => el.textContent = initials || 'JD');
 
     document.getElementById('last-login-time').textContent = `Just Now • ${new Date().toLocaleTimeString()} (Gmail OTP Verified)`;
 
@@ -724,7 +724,7 @@ function checkExistingSession() {
     const sessionStr = sessionStorage.getItem('bank_active_session');
     if (!sessionStr) return;
 
-    const onOverviewPage = window.location.pathname.startsWith('/home/landingPage/');
+    const onOverviewPage = window.location.pathname.startsWith('/home/landingPage/') || window.location.pathname.startsWith('/investments');
 
     try {
         const user = JSON.parse(sessionStr);
@@ -732,25 +732,22 @@ function checkExistingSession() {
             // Already on dashboard — just populate the DOM, do NOT redirect.
             currentUser = user;
             const nameEl = document.getElementById('dash-user-name');
-            const accEl  = document.getElementById('dash-acc-num');
+            const accEl = document.getElementById('dash-acc-num');
             const typeEl = document.getElementById('dash-acc-type');
-            const balEl  = document.getElementById('dash-balance');
-            const avEl   = document.getElementById('dash-avatar');
-            const tsEl   = document.getElementById('last-login-time');
+            const balEl = document.getElementById('dash-balance');
+            const tsEl = document.getElementById('last-login-time');
             if (nameEl) nameEl.textContent = user.name;
-            if (accEl)  accEl.textContent  = `ACC: ${user.accountNumber}`;
-            if (typeEl) typeEl.textContent  = user.accountType || 'Premier Vault Account';
-            if (balEl)  balEl.textContent   = user.balance || '148,920.50';
-            if (avEl) {
-                const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-                avEl.textContent = initials || 'JD';
-            }
+            if (accEl) accEl.textContent = `ACC: ${user.accountNumber}`;
+            if (typeEl) typeEl.textContent = user.accountType || 'Premier Vault Account';
+            if (balEl) balEl.textContent = user.balance || '148,920.50';
+            const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            document.querySelectorAll('.spx-avatar-initials').forEach(el => el.textContent = initials || 'JD');
             if (tsEl) tsEl.textContent = `Last Session • (Gmail OTP Verified)`;
         } else {
             // On the login SPA — redirect to dashboard since session is valid.
             window.location.href = '/home/landingPage/homePage';
         }
-    } catch(e) {
+    } catch (e) {
         sessionStorage.removeItem('bank_active_session');
     }
 }
@@ -871,7 +868,7 @@ function showToast(message, type = 'info') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    
+
     let iconSvg = '';
     if (type === 'success') {
         iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#059669" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
@@ -894,223 +891,223 @@ function showToast(message, type = 'info') {
 let previouslyActiveTab = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-  const paymentsBtn    = document.getElementById('nav-payments-tab');
-  const depositsBtn    = document.getElementById('nav-deposits-tab');
-  const loansBtn       = document.getElementById('nav-loans-tab');
-  const cardsBtn       = document.getElementById('nav-cards-tab');
-  const investmentsBtn = document.getElementById('nav-investments-tab');
-  const insuranceBtn   = document.getElementById('nav-insurance-tab');
-  const servicesBtn    = document.getElementById('nav-services-tab');
-  const megaMenu       = document.querySelector('.spx-mega-menu');
-  const depositsMegaMenu = document.querySelector('.spx-deposits-mega-menu');
-  const loansMegaMenu  = document.querySelector('.spx-loans-mega-menu');
-  const cardsMegaMenu  = document.querySelector('.spx-cards-mega-menu');
-  const investmentsMegaMenu = document.querySelector('.spx-investments-mega-menu');
-  const insuranceMegaMenu = document.querySelector('.spx-insurance-mega-menu');
-  const servicesMegaMenu = document.querySelector('.spx-services-mega-menu');
-  const overlay        = document.getElementById('mega-menu-overlay');
+    const paymentsBtn = document.getElementById('nav-payments-tab');
+    const depositsBtn = document.getElementById('nav-deposits-tab');
+    const loansBtn = document.getElementById('nav-loans-tab');
+    const cardsBtn = document.getElementById('nav-cards-tab');
+    const investmentsBtn = document.getElementById('nav-investments-tab');
+    const insuranceBtn = document.getElementById('nav-insurance-tab');
+    const servicesBtn = document.getElementById('nav-services-tab');
+    const megaMenu = document.querySelector('.spx-mega-menu');
+    const depositsMegaMenu = document.querySelector('.spx-deposits-mega-menu');
+    const loansMegaMenu = document.querySelector('.spx-loans-mega-menu');
+    const cardsMegaMenu = document.querySelector('.spx-cards-mega-menu');
+    const investmentsMegaMenu = document.querySelector('.spx-investments-mega-menu');
+    const insuranceMegaMenu = document.querySelector('.spx-insurance-mega-menu');
+    const servicesMegaMenu = document.querySelector('.spx-services-mega-menu');
+    const overlay = document.getElementById('mega-menu-overlay');
 
-  // ── Helper: close ALL mega-menus and restore previously-active tab ──
-  function closeAllMenus(restoreTab) {
-    if (megaMenu)        { megaMenu.classList.remove('active'); }
-    if (depositsMegaMenu){ depositsMegaMenu.classList.remove('active'); }
-    if (loansMegaMenu)   { loansMegaMenu.classList.remove('active'); }
-    if (cardsMegaMenu)   { cardsMegaMenu.classList.remove('active'); }
-    if (investmentsMegaMenu){ investmentsMegaMenu.classList.remove('active'); }
-    if (insuranceMegaMenu){ insuranceMegaMenu.classList.remove('active'); }
-    if (servicesMegaMenu){ servicesMegaMenu.classList.remove('active'); }
-    if (paymentsBtn)     { paymentsBtn.classList.remove('mega-active'); }
-    if (depositsBtn)     { depositsBtn.classList.remove('mega-active'); }
-    if (loansBtn)        { loansBtn.classList.remove('mega-active'); }
-    if (cardsBtn)        { cardsBtn.classList.remove('mega-active'); }
-    if (investmentsBtn)  { investmentsBtn.classList.remove('mega-active'); }
-    if (insuranceBtn)    { insuranceBtn.classList.remove('mega-active'); }
-    if (servicesBtn)     { servicesBtn.classList.remove('mega-active'); }
-    if (overlay)         { overlay.classList.remove('active'); }
-    if (restoreTab && previouslyActiveTab) {
-      previouslyActiveTab.classList.add('active');
-      previouslyActiveTab = null;
+    // ── Helper: close ALL mega-menus and restore previously-active tab ──
+    function closeAllMenus(restoreTab) {
+        if (megaMenu) { megaMenu.classList.remove('active'); }
+        if (depositsMegaMenu) { depositsMegaMenu.classList.remove('active'); }
+        if (loansMegaMenu) { loansMegaMenu.classList.remove('active'); }
+        if (cardsMegaMenu) { cardsMegaMenu.classList.remove('active'); }
+        if (investmentsMegaMenu) { investmentsMegaMenu.classList.remove('active'); }
+        if (insuranceMegaMenu) { insuranceMegaMenu.classList.remove('active'); }
+        if (servicesMegaMenu) { servicesMegaMenu.classList.remove('active'); }
+        if (paymentsBtn) { paymentsBtn.classList.remove('mega-active'); }
+        if (depositsBtn) { depositsBtn.classList.remove('mega-active'); }
+        if (loansBtn) { loansBtn.classList.remove('mega-active'); }
+        if (cardsBtn) { cardsBtn.classList.remove('mega-active'); }
+        if (investmentsBtn) { investmentsBtn.classList.remove('mega-active'); }
+        if (insuranceBtn) { insuranceBtn.classList.remove('mega-active'); }
+        if (servicesBtn) { servicesBtn.classList.remove('mega-active'); }
+        if (overlay) { overlay.classList.remove('active'); }
+        if (restoreTab && previouslyActiveTab) {
+            previouslyActiveTab.classList.add('active');
+            previouslyActiveTab = null;
+        }
     }
-  }
 
-  // ── Helper: open a specific menu, centred under its trigger button ──
-  function openMenu(menu, triggerBtn) {
-    if (!menu || !triggerBtn) return;
-    const tabRect    = triggerBtn.getBoundingClientRect();
-    const parentRect = menu.offsetParent
-        ? menu.offsetParent.getBoundingClientRect()
-        : { left: 0 };
-    const tabCentre  = tabRect.left + tabRect.width / 2 - parentRect.left;
-    const menuHalf   = menu.offsetWidth / 2 || 270; // fallback 270 = 540/2
-    menu.style.left      = (tabCentre - menuHalf) + 'px';
-    menu.style.transform = 'none';
-    menu.classList.add('active');
-    triggerBtn.classList.add('mega-active');
-    if (overlay) overlay.classList.add('active');
-  }
-
-  // ── Payments tab ──
-  if (paymentsBtn && megaMenu) {
-    paymentsBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const isOpening = !megaMenu.classList.contains('active');
-      if (isOpening) {
-        // Snapshot active tab before closing it
-        const activeTab = document.querySelector('.spx-nav-item.active');
-        if (activeTab && activeTab !== paymentsBtn) {
-          previouslyActiveTab = activeTab;
-          activeTab.classList.remove('active');
-        }
-        closeAllMenus(false);   // close Deposits (if open) without restoring
-        openMenu(megaMenu, paymentsBtn);
-      } else {
-        closeAllMenus(true);
-      }
-    });
-  }
-
-  // ── Deposits tab ──
-  if (depositsBtn && depositsMegaMenu) {
-    depositsBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const isOpening = !depositsMegaMenu.classList.contains('active');
-      if (isOpening) {
-        // Snapshot active tab before closing it
-        const activeTab = document.querySelector('.spx-nav-item.active');
-        if (activeTab && activeTab !== depositsBtn) {
-          previouslyActiveTab = activeTab;
-          activeTab.classList.remove('active');
-        }
-        closeAllMenus(false);   // close Payments (if open) without restoring
-        openMenu(depositsMegaMenu, depositsBtn);
-      } else {
-        closeAllMenus(true);
-      }
-    });
-  }
-
-  // ── Loans tab ──
-  if (loansBtn && loansMegaMenu) {
-    loansBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const isOpening = !loansMegaMenu.classList.contains('active');
-      if (isOpening) {
-        // Snapshot active tab before closing it
-        const activeTab = document.querySelector('.spx-nav-item.active');
-        if (activeTab && activeTab !== loansBtn) {
-          previouslyActiveTab = activeTab;
-          activeTab.classList.remove('active');
-        }
-        closeAllMenus(false);   // close Payments/Deposits (if open) without restoring
-        openMenu(loansMegaMenu, loansBtn);
-      } else {
-        closeAllMenus(true);
-      }
-    });
-  }
-
-  // ── Cards tab ──
-  if (cardsBtn && cardsMegaMenu) {
-    cardsBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const isOpening = !cardsMegaMenu.classList.contains('active');
-      if (isOpening) {
-        // Snapshot active tab before closing it
-        const activeTab = document.querySelector('.spx-nav-item.active');
-        if (activeTab && activeTab !== cardsBtn) {
-          previouslyActiveTab = activeTab;
-          activeTab.classList.remove('active');
-        }
-        closeAllMenus(false);
-        openMenu(cardsMegaMenu, cardsBtn);
-      } else {
-        closeAllMenus(true);
-      }
-    });
-  }
-
-  // ── Investments tab ──
-  if (investmentsBtn && investmentsMegaMenu) {
-    investmentsBtn.addEventListener('mouseenter', () => {
-      const activeTab = document.querySelector('.spx-nav-item.active');
-      if (activeTab && activeTab !== investmentsBtn) {
-        previouslyActiveTab = activeTab;
-        activeTab.classList.remove('active');
-      }
-      closeAllMenus(false);
-      openMenu(investmentsMegaMenu, investmentsBtn);
-    });
-
-    investmentsBtn.addEventListener('click', (e) => {
-      const targetHref = investmentsBtn.getAttribute('href');
-      if (targetHref && targetHref !== '#') {
-        window.location.href = targetHref;
-      } else {
-        window.location.href = '/investments';
-      }
-    });
-  }
-
-  // ── Insurance tab ──
-  if (insuranceBtn && insuranceMegaMenu) {
-    insuranceBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const isOpening = !insuranceMegaMenu.classList.contains('active');
-      if (isOpening) {
-        // Snapshot active tab before closing it
-        const activeTab = document.querySelector('.spx-nav-item.active');
-        if (activeTab && activeTab !== insuranceBtn) {
-          previouslyActiveTab = activeTab;
-          activeTab.classList.remove('active');
-        }
-        closeAllMenus(false);
-        openMenu(insuranceMegaMenu, insuranceBtn);
-      } else {
-        closeAllMenus(true);
-      }
-    });
-  }
-
-  // ── Services tab ──
-  if (servicesBtn && servicesMegaMenu) {
-    servicesBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const isOpening = !servicesMegaMenu.classList.contains('active');
-      if (isOpening) {
-        // Snapshot active tab before closing it
-        const activeTab = document.querySelector('.spx-nav-item.active');
-        if (activeTab && activeTab !== servicesBtn) {
-          previouslyActiveTab = activeTab;
-          activeTab.classList.remove('active');
-        }
-        closeAllMenus(false);
-        openMenu(servicesMegaMenu, servicesBtn);
-      } else {
-        closeAllMenus(true);
-      }
-    });
-  }
-
-  // ── Outside-click / overlay-click: close everything ──
-  document.addEventListener('click', (e) => {
-    const clickedInsidePayments = paymentsBtn && paymentsBtn.contains(e.target);
-    const clickedInsideDeposits = depositsBtn && depositsBtn.contains(e.target);
-    const clickedInsideLoans    = loansBtn && loansBtn.contains(e.target);
-    const clickedInsideCards    = cardsBtn && cardsBtn.contains(e.target);
-    const clickedInsideInvestments = investmentsBtn && investmentsBtn.contains(e.target);
-    const clickedInsideInsurance   = insuranceBtn && insuranceBtn.contains(e.target);
-    const clickedInsideServices    = servicesBtn && servicesBtn.contains(e.target);
-    const clickedInPaymentsMenu = megaMenu && megaMenu.contains(e.target);
-    const clickedInDepositsMenu = depositsMegaMenu && depositsMegaMenu.contains(e.target);
-    const clickedInLoansMenu    = loansMegaMenu && loansMegaMenu.contains(e.target);
-    const clickedInCardsMenu    = cardsMegaMenu && cardsMegaMenu.contains(e.target);
-    const clickedInInvestmentsMenu = investmentsMegaMenu && investmentsMegaMenu.contains(e.target);
-    const clickedInInsuranceMenu   = insuranceMegaMenu && insuranceMegaMenu.contains(e.target);
-    const clickedInServicesMenu    = servicesMegaMenu && servicesMegaMenu.contains(e.target);
-
-    if (!clickedInsidePayments && !clickedInsideDeposits && !clickedInsideLoans && !clickedInsideCards && !clickedInsideInvestments && !clickedInsideInsurance && !clickedInsideServices &&
-        !clickedInPaymentsMenu && !clickedInDepositsMenu && !clickedInLoansMenu && !clickedInCardsMenu && !clickedInInvestmentsMenu && !clickedInInsuranceMenu && !clickedInServicesMenu) {
-      closeAllMenus(true);
+    // ── Helper: open a specific menu, centred under its trigger button ──
+    function openMenu(menu, triggerBtn) {
+        if (!menu || !triggerBtn) return;
+        const tabRect = triggerBtn.getBoundingClientRect();
+        const parentRect = menu.offsetParent
+            ? menu.offsetParent.getBoundingClientRect()
+            : { left: 0 };
+        const tabCentre = tabRect.left + tabRect.width / 2 - parentRect.left;
+        const menuHalf = menu.offsetWidth / 2 || 270; // fallback 270 = 540/2
+        menu.style.left = (tabCentre - menuHalf) + 'px';
+        menu.style.transform = 'none';
+        menu.classList.add('active');
+        triggerBtn.classList.add('mega-active');
+        if (overlay) overlay.classList.add('active');
     }
-  });
+
+    // ── Payments tab ──
+    if (paymentsBtn && megaMenu) {
+        paymentsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isOpening = !megaMenu.classList.contains('active');
+            if (isOpening) {
+                // Snapshot active tab before closing it
+                const activeTab = document.querySelector('.spx-nav-item.active');
+                if (activeTab && activeTab !== paymentsBtn) {
+                    previouslyActiveTab = activeTab;
+                    activeTab.classList.remove('active');
+                }
+                closeAllMenus(false);   // close Deposits (if open) without restoring
+                openMenu(megaMenu, paymentsBtn);
+            } else {
+                closeAllMenus(true);
+            }
+        });
+    }
+
+    // ── Deposits tab ──
+    if (depositsBtn && depositsMegaMenu) {
+        depositsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isOpening = !depositsMegaMenu.classList.contains('active');
+            if (isOpening) {
+                // Snapshot active tab before closing it
+                const activeTab = document.querySelector('.spx-nav-item.active');
+                if (activeTab && activeTab !== depositsBtn) {
+                    previouslyActiveTab = activeTab;
+                    activeTab.classList.remove('active');
+                }
+                closeAllMenus(false);   // close Payments (if open) without restoring
+                openMenu(depositsMegaMenu, depositsBtn);
+            } else {
+                closeAllMenus(true);
+            }
+        });
+    }
+
+    // ── Loans tab ──
+    if (loansBtn && loansMegaMenu) {
+        loansBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isOpening = !loansMegaMenu.classList.contains('active');
+            if (isOpening) {
+                // Snapshot active tab before closing it
+                const activeTab = document.querySelector('.spx-nav-item.active');
+                if (activeTab && activeTab !== loansBtn) {
+                    previouslyActiveTab = activeTab;
+                    activeTab.classList.remove('active');
+                }
+                closeAllMenus(false);   // close Payments/Deposits (if open) without restoring
+                openMenu(loansMegaMenu, loansBtn);
+            } else {
+                closeAllMenus(true);
+            }
+        });
+    }
+
+    // ── Cards tab ──
+    if (cardsBtn && cardsMegaMenu) {
+        cardsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isOpening = !cardsMegaMenu.classList.contains('active');
+            if (isOpening) {
+                // Snapshot active tab before closing it
+                const activeTab = document.querySelector('.spx-nav-item.active');
+                if (activeTab && activeTab !== cardsBtn) {
+                    previouslyActiveTab = activeTab;
+                    activeTab.classList.remove('active');
+                }
+                closeAllMenus(false);
+                openMenu(cardsMegaMenu, cardsBtn);
+            } else {
+                closeAllMenus(true);
+            }
+        });
+    }
+
+    // ── Investments tab ──
+    if (investmentsBtn && investmentsMegaMenu) {
+        investmentsBtn.addEventListener('mouseenter', () => {
+            const activeTab = document.querySelector('.spx-nav-item.active');
+            if (activeTab && activeTab !== investmentsBtn) {
+                previouslyActiveTab = activeTab;
+                activeTab.classList.remove('active');
+            }
+            closeAllMenus(false);
+            openMenu(investmentsMegaMenu, investmentsBtn);
+        });
+
+        investmentsBtn.addEventListener('click', (e) => {
+            const targetHref = investmentsBtn.getAttribute('href');
+            if (targetHref && targetHref !== '#') {
+                window.location.href = targetHref;
+            } else {
+                window.location.href = '/investments';
+            }
+        });
+    }
+
+    // ── Insurance tab ──
+    if (insuranceBtn && insuranceMegaMenu) {
+        insuranceBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isOpening = !insuranceMegaMenu.classList.contains('active');
+            if (isOpening) {
+                // Snapshot active tab before closing it
+                const activeTab = document.querySelector('.spx-nav-item.active');
+                if (activeTab && activeTab !== insuranceBtn) {
+                    previouslyActiveTab = activeTab;
+                    activeTab.classList.remove('active');
+                }
+                closeAllMenus(false);
+                openMenu(insuranceMegaMenu, insuranceBtn);
+            } else {
+                closeAllMenus(true);
+            }
+        });
+    }
+
+    // ── Services tab ──
+    if (servicesBtn && servicesMegaMenu) {
+        servicesBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isOpening = !servicesMegaMenu.classList.contains('active');
+            if (isOpening) {
+                // Snapshot active tab before closing it
+                const activeTab = document.querySelector('.spx-nav-item.active');
+                if (activeTab && activeTab !== servicesBtn) {
+                    previouslyActiveTab = activeTab;
+                    activeTab.classList.remove('active');
+                }
+                closeAllMenus(false);
+                openMenu(servicesMegaMenu, servicesBtn);
+            } else {
+                closeAllMenus(true);
+            }
+        });
+    }
+
+    // ── Outside-click / overlay-click: close everything ──
+    document.addEventListener('click', (e) => {
+        const clickedInsidePayments = paymentsBtn && paymentsBtn.contains(e.target);
+        const clickedInsideDeposits = depositsBtn && depositsBtn.contains(e.target);
+        const clickedInsideLoans = loansBtn && loansBtn.contains(e.target);
+        const clickedInsideCards = cardsBtn && cardsBtn.contains(e.target);
+        const clickedInsideInvestments = investmentsBtn && investmentsBtn.contains(e.target);
+        const clickedInsideInsurance = insuranceBtn && insuranceBtn.contains(e.target);
+        const clickedInsideServices = servicesBtn && servicesBtn.contains(e.target);
+        const clickedInPaymentsMenu = megaMenu && megaMenu.contains(e.target);
+        const clickedInDepositsMenu = depositsMegaMenu && depositsMegaMenu.contains(e.target);
+        const clickedInLoansMenu = loansMegaMenu && loansMegaMenu.contains(e.target);
+        const clickedInCardsMenu = cardsMegaMenu && cardsMegaMenu.contains(e.target);
+        const clickedInInvestmentsMenu = investmentsMegaMenu && investmentsMegaMenu.contains(e.target);
+        const clickedInInsuranceMenu = insuranceMegaMenu && insuranceMegaMenu.contains(e.target);
+        const clickedInServicesMenu = servicesMegaMenu && servicesMegaMenu.contains(e.target);
+
+        if (!clickedInsidePayments && !clickedInsideDeposits && !clickedInsideLoans && !clickedInsideCards && !clickedInsideInvestments && !clickedInsideInsurance && !clickedInsideServices &&
+            !clickedInPaymentsMenu && !clickedInDepositsMenu && !clickedInLoansMenu && !clickedInCardsMenu && !clickedInInvestmentsMenu && !clickedInInsuranceMenu && !clickedInServicesMenu) {
+            closeAllMenus(true);
+        }
+    });
 });
